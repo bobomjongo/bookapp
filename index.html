@@ -6,9 +6,7 @@
 <title>FolioOS</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap');
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   :root {
     --ink: #0f0d0a;
     --deep: #1a1612;
@@ -22,7 +20,6 @@
     --smoke: #8c7d6e;
     --ghost: #4a3f35;
   }
-
   body {
     background: var(--ink);
     font-family: 'Space Grotesk', sans-serif;
@@ -32,7 +29,6 @@
     display: flex;
     flex-direction: column;
   }
-
   .topbar {
     display: flex;
     align-items: center;
@@ -81,10 +77,7 @@
     transition: all 0.2s;
   }
   .new-btn:hover { background: #c85f44; }
-
   .main { display: flex; flex: 1; overflow: hidden; }
-
-  /* SHELF */
   .shelf-view {
     flex: 1;
     overflow-y: auto;
@@ -180,8 +173,6 @@
   .status-complete { color: #6baa6d; }
   .book-word-count { font-size: 10px; color: var(--ghost); margin-top: 2px; }
   .shelf-wood { height:8px; background:linear-gradient(180deg,#3d2a14 0%,#2c1e0c 100%); border-top:2px solid #5a3d1e; margin-top:4px; margin-bottom:8px; border-radius:0 0 2px 2px; }
-
-  /* EDITOR */
   .editor-view { flex:1; display:flex; overflow:hidden; }
   .editor-sidebar {
     width: 200px;
@@ -202,14 +193,15 @@
   .chapter-item:hover { background: var(--bark); }
   .chapter-item.active { background:var(--bark); border-left-color:var(--kente-gold); }
   .chapter-num { font-size:9px; color:var(--ghost); letter-spacing:0.06em; min-width:18px; }
-  .chapter-name { font-size:12px; color:var(--cream); line-height:1.3; }
+  .chapter-name { font-size:12px; color:var(--cream); line-height:1.3; flex:1; }
   .chapter-item.active .chapter-name { color: var(--dusty-amber); }
-  .chapter-words { margin-left:auto; font-size:9px; color:var(--ghost); }
+  .chapter-words { font-size:9px; color:var(--ghost); }
+  .add-chapter-btn { display:flex; align-items:center; gap:8px; padding:8px 16px; cursor:pointer; color:var(--ghost); transition:all 0.15s; font-size:12px; }
+  .add-chapter-btn:hover { background:var(--bark); color:var(--cream); }
   .sidebar-footer { padding:12px 16px; border-top:1px solid var(--ghost); }
   .progress-label { display:flex; justify-content:space-between; font-size:10px; color:var(--smoke); margin-bottom:6px; }
   .progress-bar { height:3px; background:var(--ghost); border-radius:2px; overflow:hidden; }
   .progress-fill { height:100%; background:linear-gradient(90deg,var(--kente-gold),var(--dusty-amber)); width:22%; border-radius:2px; }
-
   .writing-pane { flex:1; display:flex; flex-direction:column; background:#131008; overflow:hidden; }
   .writing-toolbar { display:flex; align-items:center; gap:6px; padding:10px 20px; border-bottom:1px solid var(--ghost); background:var(--deep); flex-shrink:0; }
   .toolbar-btn { background:transparent; border:none; color:var(--smoke); font-size:12px; font-family:'Space Grotesk',sans-serif; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:500; transition:all 0.15s; }
@@ -226,7 +218,6 @@
   .writing-content { font-family:'Crimson Pro',serif; font-size:18px; line-height:1.85; color:var(--parchment); border:none; background:transparent; width:100%; min-height:300px; resize:none; outline:none; letter-spacing:0.01em; }
   .writing-content::placeholder { color:var(--ghost); font-style:italic; }
   .word-counter { position:absolute; bottom:20px; right:28px; font-size:11px; color:var(--ghost); letter-spacing:0.06em; }
-
   .preview-pane { width:280px; background:var(--parchment); border-left:1px solid #c8b89a; display:flex; flex-direction:column; overflow:hidden; flex-shrink:0; }
   .preview-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #c8b89a; background:#e8ddc8; }
   .preview-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#8c7560; }
@@ -246,12 +237,21 @@
   .preview-footer { display:flex; align-items:center; justify-content:center; padding:10px; border-top:0.5px solid #c8b89a; background:#e8ddc8; gap:6px; }
   .preview-page-dot { width:4px; height:4px; border-radius:50%; background:#b89878; }
   .preview-page-dot.pdactive { background:var(--terracotta); }
-
   .hidden { display: none !important; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .modal { background: var(--deep); border: 1px solid var(--ghost); border-radius: 6px; padding: 24px; max-width: 400px; width: 90%; }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); margin-bottom: 16px; }
+  .modal-input { width: 100%; padding: 10px 12px; background: var(--bark); border: 1px solid var(--ghost); color: var(--cream); font-family: 'Space Grotesk', sans-serif; font-size: 14px; border-radius: 4px; margin-bottom: 16px; }
+  .modal-input::placeholder { color: var(--ghost); }
+  .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
+  .modal-btn { padding: 8px 16px; border: none; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .modal-btn-cancel { background: var(--bark); color: var(--cream); }
+  .modal-btn-cancel:hover { background: var(--ghost); }
+  .modal-btn-confirm { background: var(--kente-gold); color: var(--ink); }
+  .modal-btn-confirm:hover { background: var(--dusty-amber); }
 </style>
 </head>
 <body>
-
 <div class="topbar">
   <div class="logo">folio<span>OS</span></div>
   <div class="nav-tabs">
@@ -259,90 +259,26 @@
     <button class="nav-tab" id="tabEditor" onclick="showView('editor')">Editor</button>
   </div>
   <div>
-    <button class="new-btn" onclick="showView('editor')">+ New Work</button>
+    <button class="new-btn" onclick="openNewWorkModal()">+ New Work</button>
   </div>
 </div>
-
 <div class="main">
-
-  <!-- SHELF -->
   <div class="shelf-view" id="shelfView">
-    <div>
-      <div class="shelf-header">
-        <div class="shelf-title">Active Works</div>
-        <div class="shelf-count">3 in progress</div>
-      </div>
-      <div class="book-grid">
-        <div class="book-item" onclick="showView('editor')">
-          <div class="book-cover book-1"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">Ashes of Kano</div></div></div>
-          <div class="book-status status-writing"><div class="dot"></div> Writing</div>
-          <div class="book-word-count">12,440 words</div>
-        </div>
-        <div class="book-item" onclick="showView('editor')">
-          <div class="book-cover book-2"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">Lagos Blue</div></div></div>
-          <div class="book-status status-writing"><div class="dot"></div> Writing</div>
-          <div class="book-word-count">6,210 words</div>
-        </div>
-        <div class="book-item" onclick="showView('editor')">
-          <div class="book-cover book-3"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">Iroko</div></div></div>
-          <div class="book-status status-draft"><div class="dot"></div> Draft</div>
-          <div class="book-word-count">3,050 words</div>
-        </div>
-        <div class="book-item" onclick="showView('editor')">
-          <div class="book-cover book-new"><div class="book-new-icon">+</div></div>
-          <div class="book-status status-draft"><div class="dot" style="opacity:0"></div></div>
-          <div class="book-word-count" style="color:var(--ghost)">Start writing</div>
-        </div>
-      </div>
-      <div class="shelf-wood"></div>
-    </div>
-    <div>
-      <div class="shelf-header">
-        <div class="shelf-title">Completed</div>
-        <div class="shelf-count">2 works</div>
-      </div>
-      <div class="book-grid">
-        <div class="book-item">
-          <div class="book-cover book-4"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">The Compound</div></div></div>
-          <div class="book-status status-complete"><div class="dot"></div> Complete</div>
-          <div class="book-word-count">41,200 words</div>
-        </div>
-        <div class="book-item">
-          <div class="book-cover book-5"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">Nameless</div></div></div>
-          <div class="book-status status-complete"><div class="dot"></div> Complete</div>
-          <div class="book-word-count">28,700 words</div>
-        </div>
-      </div>
-      <div class="shelf-wood"></div>
-    </div>
+    <div id="activeWorksSection"></div>
+    <div id="completedWorksSection"></div>
   </div>
-
-  <!-- EDITOR -->
   <div class="editor-view hidden" id="editorView">
     <div class="editor-sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-book-title">Ashes of Kano</div>
-        <div class="sidebar-meta">Fiction · Novel</div>
+        <div class="sidebar-book-title" id="sidebarTitle">Select a work</div>
+        <div class="sidebar-meta" id="sidebarMeta"></div>
       </div>
-      <div class="chapter-list">
-        <div class="chapter-section-label">Front Matter</div>
-        <div class="chapter-item"><div class="chapter-num">—</div><div class="chapter-name">Dedication</div></div>
-        <div class="chapter-item"><div class="chapter-num">—</div><div class="chapter-name">Epigraph</div></div>
-        <div class="chapter-section-label" style="margin-top:8px">Chapters</div>
-        <div class="chapter-item active" onclick="selectChapter(this)"><div class="chapter-num">01</div><div class="chapter-name">The Road North</div><div class="chapter-words">2.1k</div></div>
-        <div class="chapter-item" onclick="selectChapter(this)"><div class="chapter-num">02</div><div class="chapter-name">Dust and Memory</div><div class="chapter-words">1.8k</div></div>
-        <div class="chapter-item" onclick="selectChapter(this)"><div class="chapter-num">03</div><div class="chapter-name">The Market</div><div class="chapter-words">940</div></div>
-        <div class="chapter-item" onclick="selectChapter(this)"><div class="chapter-num">04</div><div class="chapter-name">Before the Fire</div><div class="chapter-words">—</div></div>
-        <div class="chapter-item" style="opacity:0.4"><div class="chapter-num">+</div><div class="chapter-name" style="font-style:italic;color:var(--ghost)">Add chapter</div></div>
-        <div class="chapter-section-label" style="margin-top:8px">Back Matter</div>
-        <div class="chapter-item" onclick="selectChapter(this)"><div class="chapter-num">—</div><div class="chapter-name">Author's Note</div></div>
-      </div>
+      <div class="chapter-list" id="chapterList"></div>
       <div class="sidebar-footer">
-        <div class="progress-label"><span>Progress</span><span>12,440 / 55,000</span></div>
+        <div class="progress-label"><span>Progress</span><span id="progressText">0 / 0</span></div>
         <div class="progress-bar"><div class="progress-fill"></div></div>
       </div>
     </div>
-
     <div class="writing-pane">
       <div class="writing-toolbar">
         <button class="toolbar-btn tbactive">B</button>
@@ -356,41 +292,80 @@
         <button class="toolbar-btn" style="margin-left:auto;color:var(--kente-gold)">AI Feedback</button>
       </div>
       <div class="writing-area">
-        <input class="chapter-heading-edit" id="chapterTitle" value="Chapter One: The Road North" oninput="syncPreview()">
-        <div class="chapter-sub"><span>Chapter 01</span></div>
-        <textarea class="writing-content" id="writingArea" oninput="syncPreview()">The harmattan came early that year, coating everything in Kano with a fine red dust that tasted of the Sahara. Amara pressed her face against the bus window and watched the minarets recede behind a gauze of heat and particulate, already uncertain whether she was leaving or being expelled.
-
-She had not told anyone she was going. Not her mother, who would have wept. Not Dele, who would have laughed. Certainly not the man in the grey kaftan who had handed her the envelope three weeks ago on Ahmadu Bello Way, as though passing salt across a table.</textarea>
-        <div class="word-counter" id="wordCounter">148 words</div>
+        <input class="chapter-heading-edit" id="chapterTitle" placeholder="Chapter title" oninput="syncPreviewAndSave()">
+        <div class="chapter-sub"><span id="chapterSubText">Chapter 01</span></div>
+        <textarea class="writing-content" id="writingArea" placeholder="Start writing..." oninput="syncPreviewAndSave()"></textarea>
+        <div class="word-counter" id="wordCounter">0 words</div>
       </div>
     </div>
-
     <div class="preview-pane">
       <div class="preview-header">
         <div class="preview-label">Live Preview</div>
-        <div class="preview-page-num">Page 1 of 4</div>
+        <div class="preview-page-num" id="pageNum">Page 1</div>
       </div>
       <div class="preview-book">
-        <div class="preview-chapter-num" id="previewChapNum">Chapter One</div>
-        <div class="preview-chapter-title" id="previewTitle">The Road North</div>
+        <div class="preview-chapter-num" id="previewChapNum">Chapter</div>
+        <div class="preview-chapter-title" id="previewTitle">Title</div>
         <div class="preview-divider"><div class="preview-divider-diamond"></div></div>
-        <div class="preview-text" id="previewText">
-          <p>The harmattan came early that year, coating everything in Kano with a fine red dust that tasted of the Sahara. Amara pressed her face against the bus window and watched the minarets recede behind a gauze of heat and particulate, already uncertain whether she was leaving or being expelled.</p>
-          <p>She had not told anyone she was going. Not her mother, who would have wept. Not Dele, who would have laughed. Certainly not the man in the grey kaftan who had handed her the envelope three weeks ago on Ahmadu Bello Way, as though passing salt across a table.<span class="preview-cursor"></span></p>
-        </div>
+        <div class="preview-text" id="previewText"><p><span class="preview-cursor"></span></p></div>
       </div>
-      <div class="preview-footer">
-        <div class="preview-page-dot pdactive"></div>
-        <div class="preview-page-dot"></div>
-        <div class="preview-page-dot"></div>
-        <div class="preview-page-dot"></div>
-      </div>
+      <div class="preview-footer"><div class="preview-page-dot pdactive"></div></div>
     </div>
   </div>
+</div>
 
+<div class="modal-overlay hidden" id="newWorkModal">
+  <div class="modal">
+    <div class="modal-title">New Work</div>
+    <input class="modal-input" id="workTitleInput" placeholder="Title of your work" />
+    <input class="modal-input" id="workGenreInput" placeholder="Genre (e.g., Fiction, Essay)" />
+    <div class="modal-buttons">
+      <button class="modal-btn modal-btn-cancel" onclick="closeNewWorkModal()">Cancel</button>
+      <button class="modal-btn modal-btn-confirm" onclick="createNewWork()">Create</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="newChapterModal">
+  <div class="modal">
+    <div class="modal-title">New Chapter</div>
+    <input class="modal-input" id="chapterTitleInput" placeholder="Chapter title" />
+    <div class="modal-buttons">
+      <button class="modal-btn modal-btn-cancel" onclick="closeNewChapterModal()">Cancel</button>
+      <button class="modal-btn modal-btn-confirm" onclick="createNewChapter()">Create</button>
+    </div>
+  </div>
 </div>
 
 <script>
+  const STORAGE_KEY = 'folioOS_data';
+
+  function getStorage() {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return initializeDefaultData();
+    return JSON.parse(data);
+  }
+
+  function saveStorage(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function initializeDefaultData() {
+    const defaultData = {
+      works: [
+        { id: 1, title: 'Ashes of Kano', genre: 'Fiction', status: 'writing', bookClass: 'book-1', chapters: [{ id: 1, title: 'Chapter One: The Road North', content: 'The harmattan came early that year, coating everything in Kano with a fine red dust that tasted of the Sahara. Amara pressed her face against the bus window and watched the minarets recede behind a gauze of heat and particulate, already uncertain whether she was leaving or being expelled.\n\nShe had not told anyone she was going. Not her mother, who would have wept. Not Dele, who would have laughed. Certainly not the man in the grey kaftan who had handed her the envelope three weeks ago on Ahmadu Bello Way, as though passing salt across a table.' }, { id: 2, title: 'Chapter Two: Dust and Memory', content: '' }, { id: 3, title: 'Chapter Three: The Market', content: '' }] },
+        { id: 2, title: 'Lagos Blue', genre: 'Fiction', status: 'writing', bookClass: 'book-2', chapters: [{ id: 1, title: 'Chapter One: Awakening', content: '' }] },
+        { id: 3, title: 'Iroko', genre: 'Essay', status: 'draft', bookClass: 'book-3', chapters: [{ id: 1, title: 'The Tree and Its Meaning', content: '' }] },
+        { id: 4, title: 'The Compound', genre: 'Novel', status: 'complete', bookClass: 'book-4', chapters: [{ id: 1, title: 'Prologue', content: '' }] },
+        { id: 5, title: 'Nameless', genre: 'Poetry', status: 'complete', bookClass: 'book-5', chapters: [{ id: 1, title: 'Collection', content: '' }] }
+      ],
+      currentWorkId: 1,
+      currentChapterId: 1
+    };
+    saveStorage(defaultData);
+    return defaultData;
+  }
+
   function showView(view) {
     const shelf = document.getElementById('shelfView');
     const editor = document.getElementById('editorView');
@@ -401,38 +376,186 @@ She had not told anyone she was going. Not her mother, who would have wept. Not 
       editor.classList.add('hidden');
       t1.classList.add('active');
       t2.classList.remove('active');
+      renderShelf();
     } else {
       shelf.classList.add('hidden');
       editor.classList.remove('hidden');
       t1.classList.remove('active');
       t2.classList.add('active');
+      loadEditor();
     }
   }
 
-  function selectChapter(el) {
-    document.querySelectorAll('.chapter-item').forEach(i => i.classList.remove('active'));
-    el.classList.add('active');
+  function renderShelf() {
+    const data = getStorage();
+    const activeWorks = data.works.filter(w => w.status === 'writing' || w.status === 'draft');
+    const completedWorks = data.works.filter(w => w.status === 'complete');
+
+    let activeHtml = '<div><div class="shelf-header"><div class="shelf-title">Active Works</div><div class="shelf-count">' + activeWorks.length + ' in progress</div></div><div class="book-grid">';
+    activeWorks.forEach(work => {
+      const wordCount = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
+      activeHtml += '<div class="book-item" onclick="selectWork(' + work.id + ')"><div class="book-cover ' + work.bookClass + '"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">' + work.title + '</div></div></div><div class="book-status status-' + work.status + '"><div class="dot"></div> ' + (work.status.charAt(0).toUpperCase() + work.status.slice(1)) + '</div><div class="book-word-count">' + wordCount.toLocaleString() + ' words</div></div>';
+    });
+    activeHtml += '<div class="book-item" onclick="openNewWorkModal()"><div class="book-cover book-new"><div class="book-new-icon">+</div></div><div class="book-status status-draft"><div class="dot" style="opacity:0"></div></div><div class="book-word-count" style="color:var(--ghost)">Start writing</div></div></div><div class="shelf-wood"></div></div>';
+
+    let completedHtml = '<div><div class="shelf-header"><div class="shelf-title">Completed</div><div class="shelf-count">' + completedWorks.length + ' works</div></div><div class="book-grid">';
+    completedWorks.forEach(work => {
+      const wordCount = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
+      completedHtml += '<div class="book-item" onclick="selectWork(' + work.id + ')"><div class="book-cover ' + work.bookClass + '"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">' + work.title + '</div></div></div><div class="book-status status-complete"><div class="dot"></div> Complete</div><div class="book-word-count">' + wordCount.toLocaleString() + ' words</div></div>';
+    });
+    completedHtml += '</div><div class="shelf-wood"></div></div>';
+
+    document.getElementById('activeWorksSection').innerHTML = activeHtml;
+    document.getElementById('completedWorksSection').innerHTML = completedWorks.length > 0 ? completedHtml : '';
   }
 
-  function syncPreview() {
+  function selectWork(workId) {
+    const data = getStorage();
+    data.currentWorkId = workId;
+    data.currentChapterId = data.works.find(w => w.id === workId).chapters[0].id;
+    saveStorage(data);
+    showView('editor');
+  }
+
+  function loadEditor() {
+    const data = getStorage();
+    const work = data.works.find(w => w.id === data.currentWorkId);
+    if (!work) return;
+    const chapter = work.chapters.find(ch => ch.id === data.currentChapterId) || work.chapters[0];
+    document.getElementById('sidebarTitle').textContent = work.title;
+    document.getElementById('sidebarMeta').textContent = work.genre + ' · ' + work.status;
+    renderChapterList(work, chapter);
+    loadChapter(chapter);
+  }
+
+  function renderChapterList(work, activeChapter) {
+    let html = '<div class="chapter-section-label">Chapters</div>';
+    work.chapters.forEach((ch, idx) => {
+      const isActive = ch.id === activeChapter.id ? 'active' : '';
+      const wordCount = ch.content ? ch.content.split(/\s+/).length : 0;
+      html += '<div class="chapter-item ' + isActive + '" onclick="switchChapter(' + ch.id + ')"><div class="chapter-num">' + (idx + 1).toString().padStart(2, '0') + '</div><div class="chapter-name">' + ch.title + '</div><div class="chapter-words">' + (wordCount ? wordCount.toLocaleString() : '—') + '</div></div>';
+    });
+    html += '<div class="add-chapter-btn" onclick="openNewChapterModal()">+ Add chapter</div>';
+    document.getElementById('chapterList').innerHTML = html;
+  }
+
+  function loadChapter(chapter) {
+    const data = getStorage();
+    const work = data.works.find(w => w.id === data.currentWorkId);
+    const chapterIndex = work.chapters.findIndex(ch => ch.id === chapter.id) + 1;
+    document.getElementById('chapterTitle').value = chapter.title;
+    document.getElementById('writingArea').value = chapter.content || '';
+    document.getElementById('chapterSubText').textContent = 'Chapter ' + chapterIndex.toString().padStart(2, '0');
+    const totalWords = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
+    const targetWords = 50000;
+    document.getElementById('progressText').textContent = totalWords.toLocaleString() + ' / ' + targetWords.toLocaleString();
+    document.querySelector('.progress-fill').style.width = Math.min(100, (totalWords / targetWords) * 100) + '%';
+    syncPreviewAndSave();
+  }
+
+  function switchChapter(chapterId) {
+    const data = getStorage();
+    data.currentChapterId = chapterId;
+    saveStorage(data);
+    loadEditor();
+  }
+
+  function syncPreviewAndSave() {
+    const data = getStorage();
+    const work = data.works.find(w => w.id === data.currentWorkId);
+    const chapter = work.chapters.find(ch => ch.id === data.currentChapterId);
     const titleVal = document.getElementById('chapterTitle').value;
     const bodyVal = document.getElementById('writingArea').value;
-
+    chapter.title = titleVal;
+    chapter.content = bodyVal;
+    saveStorage(data);
     const parts = titleVal.split(':');
     const displayTitle = parts.length > 1 ? parts[1].trim() : titleVal;
     document.getElementById('previewTitle').textContent = displayTitle;
-
     const paragraphs = bodyVal.split(/\n\n+/).filter(p => p.trim());
     const previewText = document.getElementById('previewText');
     if (paragraphs.length > 0) {
-      previewText.innerHTML = paragraphs.map((p, i) =>
-        '<p>' + p.trim() + (i === paragraphs.length - 1 ? '<span class="preview-cursor"></span>' : '') + '</p>'
-      ).join('');
+      previewText.innerHTML = paragraphs.map((p, i) => '<p>' + p.trim() + (i === paragraphs.length - 1 ? '<span class="preview-cursor"></span>' : '') + '</p>').join('');
+    } else {
+      previewText.innerHTML = '<p><span class="preview-cursor"></span></p>';
     }
-
     const words = bodyVal.trim() ? bodyVal.trim().split(/\s+/).length : 0;
     document.getElementById('wordCounter').textContent = words + ' words';
   }
+
+  function openNewWorkModal() {
+    document.getElementById('newWorkModal').classList.remove('hidden');
+    document.getElementById('workTitleInput').focus();
+  }
+
+  function closeNewWorkModal() {
+    document.getElementById('newWorkModal').classList.add('hidden');
+  }
+
+  function createNewWork() {
+    const title = document.getElementById('workTitleInput').value.trim();
+    const genre = document.getElementById('workGenreInput').value.trim() || 'Untitled';
+    if (!title) return;
+    const data = getStorage();
+    const newId = Math.max(...data.works.map(w => w.id), 0) + 1;
+    const bookClasses = ['book-1', 'book-2', 'book-3', 'book-4', 'book-5'];
+    const bookClass = bookClasses[(newId - 1) % bookClasses.length];
+    data.works.push({ id: newId, title: title, genre: genre, status: 'draft', bookClass: bookClass, chapters: [{ id: 1, title: 'Chapter One', content: '' }] });
+    data.currentWorkId = newId;
+    data.currentChapterId = 1;
+    saveStorage(data);
+    closeNewWorkModal();
+    document.getElementById('workTitleInput').value = '';
+    document.getElementById('workGenreInput').value = '';
+    renderShelf();
+    showView('editor');
+  }
+
+  function openNewChapterModal() {
+    document.getElementById('newChapterModal').classList.remove('hidden');
+    document.getElementById('chapterTitleInput').focus();
+  }
+
+  function closeNewChapterModal() {
+    document.getElementById('newChapterModal').classList.add('hidden');
+  }
+
+  function createNewChapter() {
+    const title = document.getElementById('chapterTitleInput').value.trim();
+    if (!title) return;
+    const data = getStorage();
+    const work = data.works.find(w => w.id === data.currentWorkId);
+    const newChapterId = Math.max(...work.chapters.map(ch => ch.id), 0) + 1;
+    work.chapters.push({ id: newChapterId, title: title, content: '' });
+    data.currentChapterId = newChapterId;
+    saveStorage(data);
+    closeNewChapterModal();
+    document.getElementById('chapterTitleInput').value = '';
+    loadEditor();
+  }
+
+  function deleteChapter(chapterId) {
+    if (!confirm('Delete this chapter?')) return;
+    const data = getStorage();
+    const work = data.works.find(w => w.id === data.currentWorkId);
+    work.chapters = work.chapters.filter(ch => ch.id !== chapterId);
+    if (work.chapters.length === 0) {
+      work.chapters.push({ id: 1, title: 'Chapter One', content: '' });
+    }
+    data.currentChapterId = work.chapters[0].id;
+    saveStorage(data);
+    loadEditor();
+  }
+
+  getStorage();
+  renderShelf();
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeNewWorkModal();
+      closeNewChapterModal();
+    }
+  });
 </script>
 </body>
 </html>
