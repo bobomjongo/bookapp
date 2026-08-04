@@ -5,53 +5,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FolioOS — The Writing Room</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500&display=swap');
 
-/* ================================================================
-   FOLIOOS — ATMOSPHERIC THEME SYSTEM
-   Four times of day. The room changes. The work continues.
-   ================================================================ */
-:root {
-  /* ---- Dawn: warm honey, first light ---- */
-  --paper:        #F2E8D4;
-  --paper-deep:   #EBE0C8;
-  --bone:         #FBF6EC;
-  --linen:        #EDE4CF;
-  --ink:          #2A2219;
-  --ink-soft:     #5E5344;
-  --graphite:     #8B7E6B;
-  --rule:         #D9CDB9;
-  --lamp-top:     rgba(228,190,120,0.30);
-  --lamp-bottom:  rgba(51,36,21,0.10);
-  --accent:       #B08744;
-  --selection:    rgba(176,135,68,0.25);
-  --dust-color:   rgba(220,190,140,0.55);
-  --threshold-msg: "The first light is here.";
-
-  /* Earth pigments — book cloth (constant across themes) */
-  --clay:         #9E5236;
-  --ochre:        #B08744;
-  --moss:         #67714F;
-  --indigo:       #39424F;
-  --mulberry:     #6D4650;
-  --umber:        #55402C;
-
-  /* Wood */
-  --walnut:       #4A3523;
-  --walnut-deep:  #332415;
-  --walnut-edge:  #7a5c3b;
-  --walnut-face:  #5d442c;
-  --brass:        #A88A52;
-
-  /* Timing — paper physics */
-  --glide: cubic-bezier(0.22, 1, 0.36, 1);
-  --settle: cubic-bezier(0.33, 1, 0.68, 1);
-
-  /* Theme transition */
-  --theme-speed: 0.8s;
+  :root {
+    --paper:        #F2E8D4;
+    --paper-deep:   #EBE0C8;
+    --bone:         #FBF6EC;
+    --linen:        #EDE4CF;
+    --ink:          #2A2219;
+    --ink-soft:     #5E5344;
+    --graphite:     #8B7E6B;
+    --rule:         #D9CDB9;
+    --lamp-top:     rgba(228,190,120,0.30);
+    --lamp-bottom:  rgba(51,36,21,0.10);
+    --accent:       #B08744;
+    --selection:    rgba(176,135,68,0.25);
+    --dust-color:   rgba(220,190,140,0.55);
+    --clay:         #9E5236;
+    --ochre:        #B08744;
+    --moss:         #67714F;
+    --indigo:       #39424F;
+    --mulberry:     #6D4650;
+    --umber:        #55402C;
+    --walnut:       #4A3523;
+    --walnut-deep:  #332415;
+    --walnut-edge:  #7a5c3b;
+    --walnut-face:  #5d442c;
+    --brass:        #A88A52;
+    --glide: cubic-bezier(0.22, 1, 0.36, 1);
+    --settle: cubic-bezier(0.33, 1, 0.68, 1);
+    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --theme-speed: 0.8s;
 }
 
-/* ---- Afternoon: terracotta clarity, bright and warm ---- */
 [data-theme="afternoon"] {
   --paper:        #EFE6D8;
   --paper-deep:   #E6DBC9;
@@ -68,7 +54,6 @@
   --dust-color:   rgba(200,170,130,0.45);
 }
 
-/* ---- Dusk: golden hour, your photograph ---- */
 [data-theme="dusk"] {
   --paper:        #D5C4A8;
   --paper-deep:   #C8B595;
@@ -85,7 +70,6 @@
   --dust-color:   rgba(210,170,90,0.5);
 }
 
-/* ---- Night: deep forest quiet ---- */
 [data-theme="night"] {
   --paper:        #1E1A14;
   --paper-deep:   #17140F;
@@ -119,7 +103,6 @@ body {
   transition: background var(--theme-speed) var(--glide), color var(--theme-speed) var(--glide);
 }
 
-/* Paper grain — almost invisible, deeply felt */
 body::before {
   content:'';
   position: fixed; inset: 0;
@@ -129,7 +112,6 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* The lamp — responds to the time of day */
 .lamplight {
   position: fixed; inset: 0;
   pointer-events: none;
@@ -140,7 +122,31 @@ body::before {
   transition: background 1.2s var(--glide);
 }
 
-/* Dust particles — catching the light */
+.cursor-glow {
+  position: fixed;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(circle, var(--lamp-top) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  mix-blend-mode: soft-light;
+  transition: opacity 0.3s;
+}
+
+.vignette {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 199;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.1) 100%);
+  animation: breatheVignette 8s ease-in-out infinite;
+}
+@keyframes breatheVignette {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 .dust-layer {
   position: fixed; inset: 0;
   pointer-events: none;
@@ -162,12 +168,36 @@ body::before {
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1); }
 }
 
+.ink-cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s, border 0.2s;
+  mix-blend-mode: difference;
+  opacity: 0.8;
+}
+.ink-cursor.hovering {
+  width: 28px; height: 28px;
+  background: transparent;
+  border: 1.5px solid var(--accent);
+  opacity: 0.5;
+}
+.ink-cursor.writing {
+  width: 2px; height: 20px;
+  border-radius: 1px;
+  background: var(--accent);
+  opacity: 0.9;
+  border: none;
+}
+
 button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
 input, textarea { font: inherit; color: inherit; }
-
 ::selection { background: var(--selection); }
 
-/* Small-caps wayfinding */
 .smallcaps {
   font-family: 'EB Garamond', serif;
   font-variant: all-small-caps;
@@ -177,7 +207,6 @@ input, textarea { font: inherit; color: inherit; }
   transition: color var(--theme-speed);
 }
 
-/* Pencil actions */
 .pencil-action {
   font-family: 'EB Garamond', serif;
   font-style: italic;
@@ -185,30 +214,27 @@ input, textarea { font: inherit; color: inherit; }
   color: var(--ink-soft);
   border-bottom: 1px solid transparent;
   padding-bottom: 1px;
-  transition: color .3s var(--glide), border-color .3s var(--glide);
+  transition: color .3s var(--glide), border-color .3s var(--glide), transform 0.2s var(--spring);
+  display: inline-block;
 }
 .pencil-action:hover { color: var(--ink); border-bottom-color: var(--rule); }
 .pencil-action:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 
-/* ================================================================
-   VIEWS — rooms, not pages
-   ================================================================ */
 .room {
   position: fixed; inset: 0;
   overflow-y: auto;
   opacity: 0;
   visibility: hidden;
-  transition: opacity .7s var(--glide), visibility .7s;
+  transform: scale(1.02) translateY(10px);
+  filter: blur(2px);
+  transition: opacity .7s var(--glide), visibility .7s, transform .7s var(--glide), filter .7s var(--glide);
   z-index: 2;
 }
-.room.here { opacity: 1; visibility: visible; }
+.room.here { opacity: 1; visibility: visible; transform: scale(1) translateY(0); filter: blur(0); }
 .room::-webkit-scrollbar { width: 6px; }
 .room::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; transition: background var(--theme-speed); }
 .room::-webkit-scrollbar-track { background: transparent; }
 
-/* ================================================================
-   THE THRESHOLD
-   ================================================================ */
 #threshold {
   z-index: 100;
   display: flex; flex-direction: column;
@@ -236,6 +262,7 @@ input, textarea { font: inherit; color: inherit; }
   color: var(--ink);
   opacity: 0;
   animation: breatheIn 1.8s var(--glide) .9s forwards;
+  min-height: 40px;
 }
 .threshold-hint {
   position: absolute;
@@ -251,25 +278,11 @@ input, textarea { font: inherit; color: inherit; }
   to   { opacity: 1; transform: translateY(0); }
 }
 #threshold.leaving { animation: thresholdOut 1s var(--glide) forwards; }
-@keyframes thresholdOut { to { opacity: 0; visibility: hidden; } }
+@keyframes thresholdOut { to { opacity: 0; visibility: hidden; transform: scale(1.05); filter: blur(4px); } }
 
-/* ================================================================
-   THE LIBRARY
-   ================================================================ */
 #library { padding: 0 0 90px; transition: background var(--theme-speed); }
-
-.library-inner {
-  max-width: 1060px;
-  margin: 0 auto;
-  padding: 54px 48px 0;
-}
-
-.library-masthead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
+.library-inner { max-width: 1060px; margin: 0 auto; padding: 54px 48px 0; }
+.library-masthead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
 .wordmark {
   font-family: 'Cormorant Garamond', serif;
   font-weight: 600;
@@ -279,8 +292,9 @@ input, textarea { font: inherit; color: inherit; }
   text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,0.35);
   opacity: 0.85;
-  transition: color var(--theme-speed);
+  transition: color var(--theme-speed), letter-spacing 0.5s var(--glide);
 }
+.wordmark:hover { letter-spacing: 0.4em; }
 .wordmark em { font-style: normal; color: var(--accent); transition: color var(--theme-speed); }
 
 .library-greeting {
@@ -292,7 +306,6 @@ input, textarea { font: inherit; color: inherit; }
   transition: color var(--theme-speed);
 }
 
-/* Desk memory card */
 .desk-memory {
   display: inline-flex;
   align-items: center;
@@ -306,15 +319,26 @@ input, textarea { font: inherit; color: inherit; }
   cursor: pointer;
   transition: transform .5s var(--glide), box-shadow .5s var(--glide), background var(--theme-speed), border-color var(--theme-speed);
   text-align: left;
+  position: relative;
+  overflow: hidden;
 }
-.desk-memory:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(51,36,21,0.09), 0 18px 40px rgba(51,36,21,0.07); }
+.desk-memory::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.6s;
+}
+.desk-memory:hover::before { left: 100%; }
+.desk-memory:hover { transform: translateY(-3px) rotate(-0.5deg); box-shadow: 0 6px 20px rgba(51,36,21,0.12), 0 18px 40px rgba(51,36,21,0.08); }
 .desk-memory:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
-.desk-memory .dm-ribbon { width: 3px; height: 40px; border-radius: 1px; flex-shrink: 0; }
+.desk-memory .dm-ribbon { width: 3px; height: 40px; border-radius: 1px; flex-shrink: 0; transition: transform 0.3s var(--spring); }
+.desk-memory:hover .dm-ribbon { transform: scaleY(1.1); }
 .dm-label { font-variant: all-small-caps; letter-spacing: 0.2em; font-size: 13px; color: var(--graphite); margin-bottom: 2px; }
 .dm-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--ink); line-height: 1.2; transition: color var(--theme-speed); }
 .dm-sub { font-size: 14px; font-style: italic; color: var(--ink-soft); margin-top: 2px; }
 
-/* Brass shelf plate */
 .shelf-plate {
   display: inline-block;
   font-variant: all-small-caps;
@@ -327,10 +351,11 @@ input, textarea { font: inherit; color: inherit; }
   padding: 2px 14px 3px;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(51,36,21,0.3);
   margin-bottom: 14px;
+  transition: transform 0.3s var(--spring);
 }
+.shelf-plate:hover { transform: translateY(-1px); }
 
-/* The shelf */
-.shelf { margin-bottom: 64px; }
+.shelf { margin-bottom: 64px; transform-style: preserve-3d; perspective: 1200px; }
 .shelf-books {
   display: flex;
   align-items: flex-end;
@@ -339,6 +364,7 @@ input, textarea { font: inherit; color: inherit; }
   min-height: 196px;
   position: relative;
   perspective: 900px;
+  transition: transform 0.1s linear;
 }
 .shelf-wood {
   height: 16px;
@@ -354,7 +380,6 @@ input, textarea { font: inherit; color: inherit; }
   background: repeating-linear-gradient(90deg, transparent 0 46px, rgba(0,0,0,0.07) 46px 48px);
   opacity: .5;
 }
-/* shelf front face — depth */
 .shelf-wood::before {
   content:''; position: absolute; left: 0; right: 0; top: 100%;
   height: 10px;
@@ -362,7 +387,6 @@ input, textarea { font: inherit; color: inherit; }
   border-radius: 0 0 2px 2px;
 }
 
-/* A spine — now with 3D tilt on hover */
 .spine {
   position: relative;
   border-radius: 2px 2px 0 0;
@@ -372,7 +396,7 @@ input, textarea { font: inherit; color: inherit; }
   justify-content: space-between;
   padding: 14px 0 10px;
   cursor: pointer;
-  transition: transform .5s var(--glide), box-shadow .5s var(--glide);
+  transition: transform .5s var(--spring), box-shadow .5s var(--glide);
   transform-origin: bottom center;
   transform-style: preserve-3d;
   box-shadow:
@@ -381,7 +405,6 @@ input, textarea { font: inherit; color: inherit; }
     1px 0 2px rgba(51,36,21,0.35);
   flex-shrink: 0;
 }
-/* cloth weave */
 .spine::before {
   content:''; position:absolute; inset:0; border-radius: inherit;
   background:
@@ -389,21 +412,19 @@ input, textarea { font: inherit; color: inherit; }
     repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px);
   pointer-events: none;
 }
-/* head & tail bands */
 .spine::after {
   content:''; position:absolute; left:3px; right:3px; top:3px; height:3px;
   border-radius: 1px;
   background: repeating-linear-gradient(90deg, rgba(250,245,235,0.65) 0 3px, rgba(42,34,25,0.5) 3px 6px);
   pointer-events:none;
 }
-/* THE 3D PULL — book tilts toward you and lifts */
 .spine:hover {
-  transform: translateY(-18px) rotateX(-6deg);
+  transform: translateY(-22px) rotateX(-8deg) rotateZ(1deg);
   box-shadow:
     inset 2px 0 3px rgba(255,255,255,0.14),
     inset -3px 0 5px rgba(0,0,0,0.28),
-    0 22px 30px rgba(51,36,21,0.35),
-    0 4px 16px var(--spine-glow, rgba(158,82,54,0.25));
+    0 28px 40px rgba(51,36,21,0.4),
+    0 6px 20px var(--spine-glow, rgba(158,82,54,0.25));
 }
 .spine:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .spine.aged { filter: saturate(0.86) brightness(0.94); }
@@ -435,7 +456,6 @@ input, textarea { font: inherit; color: inherit; }
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
   box-shadow: 0 1px 2px rgba(51,36,21,0.4);
 }
-/* pigment cloths */
 .cloth-clay     { background: linear-gradient(90deg, #b06040 0%, var(--clay) 45%, #7e3f28 100%); --spine-glow: rgba(158,82,54,0.3); }
 .cloth-ochre    { background: linear-gradient(90deg, #c49a54 0%, var(--ochre) 45%, #8d6a32 100%); --spine-glow: rgba(176,135,68,0.3); }
 .cloth-moss     { background: linear-gradient(90deg, #78825e 0%, var(--moss) 45%, #4d5539 100%); --spine-glow: rgba(103,113,79,0.3); }
@@ -443,7 +463,6 @@ input, textarea { font: inherit; color: inherit; }
 .cloth-mulberry { background: linear-gradient(90deg, #7e5560 0%, var(--mulberry) 45%, #4f3138 100%); --spine-glow: rgba(109,70,80,0.3); }
 .cloth-umber    { background: linear-gradient(90deg, #6a5138 0%, var(--umber) 45%, #3c2c1e 100%); --spine-glow: rgba(85,64,44,0.3); }
 
-/* New book — pulsing invitation */
 .spine-new {
   width: 40px; height: 150px;
   background: var(--linen);
@@ -455,25 +474,34 @@ input, textarea { font: inherit; color: inherit; }
   font-size: 20px;
   font-family: 'Cormorant Garamond', serif;
   cursor: pointer;
-  transition: transform .45s var(--glide), color .45s, box-shadow .45s var(--glide), background var(--theme-speed), border-color var(--theme-speed);
+  transition: transform .45s var(--spring), color .45s, box-shadow .45s var(--glide), background var(--theme-speed), border-color var(--theme-speed);
   flex-shrink:0;
   box-shadow: inset -2px 0 4px rgba(51,36,21,0.08);
   animation: newPulse 3.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
 }
+.spine-new::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 40%, rgba(168,138,82,0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.spine-new:hover::after { opacity: 1; }
 @keyframes newPulse {
   0%, 100% { box-shadow: inset -2px 0 4px rgba(51,36,21,0.08); }
-  50%      { box-shadow: inset -2px 0 4px rgba(51,36,21,0.08), 0 0 18px rgba(168,138,82,0.15); }
+  50%      { box-shadow: inset -2px 0 4px rgba(51,36,21,0.08), 0 0 22px rgba(168,138,82,0.18); }
 }
-.spine-new:hover, .spine-new:focus-visible { transform: translateY(-10px); color: var(--ink-soft); box-shadow: 0 14px 22px rgba(51,36,21,0.2); animation: none; }
+.spine-new:hover, .spine-new:focus-visible { transform: translateY(-12px) rotate(-1deg); color: var(--ink-soft); box-shadow: 0 16px 28px rgba(51,36,21,0.22); animation: none; }
 .spine-new:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .spine-new span { writing-mode: vertical-rl; font-style: italic; font-size: 13px; letter-spacing: .1em; margin-top:6px; }
 
-/* Empty library */
 .empty-library { text-align: center; padding: 30px 0 8px; }
 .empty-library h2 { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-style: italic; font-size: 30px; color: var(--ink-soft); margin-bottom: 10px; }
 .empty-library p { font-size: 16px; color: var(--graphite); font-style: italic; }
 
-/* Room corner */
 .room-corner {
   position: fixed;
   bottom: 22px; left: 28px; right: 28px;
@@ -484,20 +512,19 @@ input, textarea { font: inherit; color: inherit; }
   transition: color var(--theme-speed);
 }
 .room-corner > * { pointer-events: auto; }
-.room-corner button { font-size: 13px; font-style: italic; color: var(--graphite); transition: color .3s; }
-.room-corner button:hover { color: var(--ink-soft); }
+.room-corner button { font-size: 13px; font-style: italic; color: var(--graphite); transition: color .3s, transform 0.2s; }
+.room-corner button:hover { color: var(--ink-soft); transform: translateY(-1px); }
 .room-corner button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius:2px; }
 
-/* Theme switcher — four small dots */
 .theme-switcher { display: flex; gap: 10px; align-items: center; }
 .theme-dot {
   width: 12px; height: 12px;
   border-radius: 50%;
   border: 1px solid var(--rule);
-  transition: transform .35s var(--glide), border-color .3s, box-shadow .3s;
+  transition: transform .35s var(--spring), border-color .3s, box-shadow .3s;
   position: relative;
 }
-.theme-dot:hover { transform: scale(1.2); }
+.theme-dot:hover { transform: scale(1.3); }
 .theme-dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .theme-dot.active { border-color: var(--ink-soft); box-shadow: 0 0 0 2px var(--paper), 0 0 0 3.5px var(--ink-soft); }
 .theme-dot[data-t="dawn"]      { background: #E8C97A; }
@@ -506,9 +533,6 @@ input, textarea { font: inherit; color: inherit; }
 .theme-dot[data-t="night"]     { background: #2A2518; }
 .theme-label { font-size: 12.5px; margin-right: 6px; }
 
-/* ================================================================
-   BOOK OPENING TRANSIT
-   ================================================================ */
 #bookTransit {
   position: fixed; inset: 0;
   z-index: 90;
@@ -550,9 +574,6 @@ input, textarea { font: inherit; color: inherit; }
   transform: translateZ(-1px);
 }
 
-/* ================================================================
-   THE DESK
-   ================================================================ */
 #desk { background: var(--paper-deep); transition: background var(--theme-speed); }
 .desk-layout {
   display: flex;
@@ -563,7 +584,6 @@ input, textarea { font: inherit; color: inherit; }
   margin: 0 auto;
 }
 
-/* Contents column */
 .contents-col {
   width: 208px;
   flex-shrink: 0;
@@ -585,9 +605,19 @@ input, textarea { font: inherit; color: inherit; }
   padding: 7px 2px 7px 0;
   border-bottom: 1px solid transparent;
   transition: border-color .3s, transform .3s var(--glide), padding-left .3s var(--glide);
+  position: relative;
 }
-/* Chapter slide on hover */
+.contents-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  width: 0; height: 1px;
+  background: var(--accent);
+  transition: width 0.3s var(--glide);
+  transform: translateY(-50%);
+}
 .contents-item:hover { border-bottom-color: var(--rule); padding-left: 8px; }
+.contents-item:hover::before { width: 4px; }
 .contents-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 .ci-numeral {
   font-family: 'EB Garamond', serif;
@@ -614,7 +644,6 @@ input, textarea { font: inherit; color: inherit; }
 .contents-meta { font-size: 13px; font-style: italic; color: var(--graphite); line-height: 1.7; transition: color var(--theme-speed); }
 .contents-meta b { font-weight: 600; color: var(--ink-soft); font-style: normal; }
 
-/* Thread — now glows with theme accent */
 .thread {
   margin-top: 10px;
   height: 2px;
@@ -631,7 +660,6 @@ input, textarea { font: inherit; color: inherit; }
   box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
-/* The manuscript sheet */
 .sheet {
   background: var(--bone);
   width: 100%;
@@ -644,13 +672,47 @@ input, textarea { font: inherit; color: inherit; }
     0 14px 44px rgba(51,36,21,0.14),
     0 40px 90px rgba(51,36,21,0.1);
   position: relative;
-  transition: background var(--theme-speed), box-shadow var(--theme-speed);
+  transition: background var(--theme-speed), box-shadow var(--theme-speed), transform 0.3s var(--glide);
+  transform-style: preserve-3d;
 }
 .sheet::after {
   content:''; position:absolute; left:0; right:0; bottom:-3px; height:3px;
   background: linear-gradient(180deg, rgba(51,36,21,0.1), transparent);
   border-radius: 0 0 2px 2px;
 }
+
+.sheet-curl {
+  position: absolute;
+  top: 0; right: 0;
+  width: 40px; height: 40px;
+  background: linear-gradient(225deg, var(--paper-deep) 45%, transparent 45%);
+  border-radius: 0 2px 0 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.4s, transform 0.4s var(--glide);
+  transform-origin: top right;
+  box-shadow: -2px 2px 4px rgba(0,0,0,0.08);
+}
+.sheet:hover .sheet-curl {
+  opacity: 1;
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.ink-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  transform: scale(0);
+  opacity: 0.3;
+  pointer-events: none;
+  animation: inkSpread 0.8s var(--glide) forwards;
+  z-index: 10;
+}
+@keyframes inkSpread {
+  to { transform: scale(4); opacity: 0; }
+}
+
 .sheet-work-title {
   text-align: center;
   font-variant: all-small-caps;
@@ -681,7 +743,8 @@ input, textarea { font: inherit; color: inherit; }
   margin-bottom: 44px;
 }
 .sheet-ornament::before, .sheet-ornament::after { content:''; width: 74px; height: 1px; background: var(--rule); transition: background var(--theme-speed); }
-.sheet-ornament span { width: 6px; height: 6px; background: var(--accent); transform: rotate(45deg); transition: background var(--theme-speed); }
+.sheet-ornament span { width: 6px; height: 6px; background: var(--accent); transform: rotate(45deg); transition: background var(--theme-speed), transform 0.5s var(--spring); }
+.sheet:hover .sheet-ornament span { transform: rotate(45deg) scale(1.2); }
 .sheet-body {
   width: 100%;
   min-height: 46vh;
@@ -708,10 +771,9 @@ input, textarea { font: inherit; color: inherit; }
   color: var(--graphite);
   transition: color var(--theme-speed);
 }
-#keptNote { transition: opacity 1.2s var(--glide); opacity: 0; }
-#keptNote.shown { opacity: 1; }
+#keptNote { transition: opacity 1.2s var(--glide), transform 0.5s var(--spring); opacity: 0; transform: translateY(4px); }
+#keptNote.shown { opacity: 1; transform: translateY(0); }
 
-/* Writing indicator */
 .writing-indicator {
   font-size: 12.5px;
   font-style: italic;
@@ -719,9 +781,12 @@ input, textarea { font: inherit; color: inherit; }
   opacity: 0;
   transition: opacity .6s var(--glide), color var(--theme-speed);
 }
-.writing-indicator.active { opacity: 1; }
+.writing-indicator.active { opacity: 1; animation: writePulse 1.5s ease-in-out infinite; }
+@keyframes writePulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
 
-/* Desk actions */
 .desk-actions {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -736,9 +801,6 @@ input, textarea { font: inherit; color: inherit; }
 .desk-actions .right-group { display: flex; gap: 26px; }
 .contents-toggle { display: none; }
 
-/* ================================================================
-   READING MODE
-   ================================================================ */
 #reading { background: var(--paper-deep); z-index: 60; transition: background var(--theme-speed); }
 .reading-stage {
   min-height: 100vh;
@@ -757,10 +819,10 @@ input, textarea { font: inherit; color: inherit; }
   border-radius: 2px;
   box-shadow: 0 2px 4px rgba(51,36,21,0.12), 0 24px 70px rgba(51,36,21,0.2);
   transform-style: preserve-3d;
-  transition: transform .45s var(--settle), opacity .45s var(--settle), background var(--theme-speed);
+  transition: transform .5s var(--settle), opacity .5s var(--settle), background var(--theme-speed);
 }
-.reading-page.turn-away { transform: rotateY(-9deg) translateX(-46px); opacity: 0; }
-.reading-page.turn-toward { transform: rotateY(7deg) translateX(46px); opacity: 0; }
+.reading-page.turn-away { transform: rotateY(-14deg) translateX(-80px) scale(0.96); opacity: 0; }
+.reading-page.turn-toward { transform: rotateY(10deg) translateX(80px) scale(0.96); opacity: 0; }
 .rp-chapter-num { text-align: center; font-variant: all-small-caps; letter-spacing: 0.34em; font-size: 13.5px; color: var(--graphite); margin-bottom: 14px; }
 .rp-title { text-align: center; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.25; margin-bottom: 12px; color: var(--ink); }
 .rp-ornament { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom: 40px; }
@@ -784,24 +846,22 @@ input, textarea { font: inherit; color: inherit; }
   float: left;
   margin: 7px 10px 0 0;
   color: var(--accent);
+  transition: color var(--theme-speed);
 }
 .rp-empty { text-align:center; font-style: italic; color: var(--graphite); padding-top: 60px; }
 .reading-nav {
   position: fixed; top: 50%; transform: translateY(-50%);
   font-family: 'Cormorant Garamond', serif; font-size: 34px;
   color: var(--graphite); padding: 20px 22px;
-  transition: color .3s; z-index: 61;
+  transition: color .3s, transform 0.2s var(--spring); z-index: 61;
 }
-.reading-nav:hover { color: var(--ink); }
+.reading-nav:hover { color: var(--ink); transform: translateY(-50%) scale(1.15); }
 .reading-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
 .reading-nav.prev { left: 12px; }
 .reading-nav.next { right: 12px; }
 .reading-close { position: fixed; top: 20px; right: 30px; z-index: 61; }
 .reading-folio { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); font-size: 12.5px; font-style: italic; color: var(--graphite); z-index: 61; }
 
-/* ================================================================
-   THE BINDERY
-   ================================================================ */
 #bindery { background: var(--paper); transition: background var(--theme-speed); }
 .bindery-inner { max-width: 620px; margin: 0 auto; padding: 100px 40px 120px; text-align: center; }
 .bindery-step { display: none; animation: breatheIn .9s var(--glide); }
@@ -809,30 +869,28 @@ input, textarea { font: inherit; color: inherit; }
 .bindery-q { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 34px; line-height: 1.3; margin-bottom: 10px; }
 .bindery-sub { font-style: italic; color: var(--ink-soft); font-size: 16px; margin-bottom: 48px; }
 .kind-shelf { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 12px; margin-bottom: 40px; }
-.kind-book { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 6px; transition: transform .4s var(--glide); }
-.kind-book:hover { transform: translateY(-6px); }
+.kind-book { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 6px; transition: transform .4s var(--spring); }
+.kind-book:hover { transform: translateY(-8px) scale(1.02); }
 .kind-book:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 3px; }
-.kind-book .kb-spine { width: 34px; height: 104px; border-radius: 2px; display:flex; align-items:center; justify-content:center; box-shadow: inset 2px 0 3px rgba(255,255,255,0.14), inset -3px 0 4px rgba(0,0,0,0.26), 0 4px 10px rgba(51,36,21,0.2); }
+.kind-book .kb-spine { width: 34px; height: 104px; border-radius: 2px; display:flex; align-items:center; justify-content:center; box-shadow: inset 2px 0 3px rgba(255,255,255,0.14), inset -3px 0 4px rgba(0,0,0,0.26), 0 4px 10px rgba(51,36,21,0.2); transition: box-shadow 0.3s; }
+.kind-book:hover .kb-spine { box-shadow: inset 2px 0 3px rgba(255,255,255,0.14), inset -3px 0 4px rgba(0,0,0,0.26), 0 8px 20px rgba(51,36,21,0.3); }
 .kind-book .kb-spine i { writing-mode: vertical-rl; font-style: normal; font-family: 'Cormorant Garamond', serif; font-size: 12.5px; letter-spacing: 0.14em; color: rgba(250,245,235,0.9); }
 .kind-book .kb-name { font-size: 13.5px; font-style: italic; color: var(--ink-soft); }
 .kind-book.chosen .kb-spine { outline: 2px solid var(--accent); outline-offset: 3px; }
-.bindery-input { display: block; width: 100%; max-width: 420px; margin: 0 auto 40px; background: transparent; border: none; border-bottom: 1px solid var(--rule); outline: none; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 30px; padding: 8px 4px 12px; color: var(--ink); transition: border-color .4s, color var(--theme-speed); }
-.bindery-input:focus { border-bottom-color: var(--accent); }
+.bindery-input { display: block; width: 100%; max-width: 420px; margin: 0 auto 40px; background: transparent; border: none; border-bottom: 1px solid var(--rule); outline: none; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 30px; padding: 8px 4px 12px; color: var(--ink); transition: border-color .4s, color var(--theme-speed), transform 0.3s; }
+.bindery-input:focus { border-bottom-color: var(--accent); transform: translateY(-2px); }
 .bindery-input::placeholder { color: var(--rule); font-style: italic; }
 .pigment-row { display: flex; justify-content: center; gap: 18px; margin-bottom: 48px; }
-.pigment-dot { width: 40px; height: 40px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -3px 5px rgba(0,0,0,0.25), 0 3px 8px rgba(51,36,21,0.2); transition: transform .35s var(--glide); position: relative; }
-.pigment-dot:hover { transform: scale(1.12); }
+.pigment-dot { width: 40px; height: 40px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -3px 5px rgba(0,0,0,0.25), 0 3px 8px rgba(51,36,21,0.2); transition: transform .35s var(--spring); position: relative; }
+.pigment-dot:hover { transform: scale(1.18); }
 .pigment-dot:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 4px; }
 .pigment-dot.chosen::after { content:''; position:absolute; inset: -7px; border: 1.5px solid var(--ink-soft); border-radius: 50%; }
 .pigment-name { display:block; font-size: 12px; font-style: italic; color: var(--graphite); margin-top: 8px; text-align:center; }
-.bindery-continue { font-family: 'EB Garamond', serif; font-variant: all-small-caps; letter-spacing: 0.24em; font-size: 16px; color: var(--ink); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 10px 34px 12px; transition: background .4s, color .4s; }
-.bindery-continue:hover { background: var(--ink); color: var(--bone); }
+.bindery-continue { font-family: 'EB Garamond', serif; font-variant: all-small-caps; letter-spacing: 0.24em; font-size: 16px; color: var(--ink); border: 1px solid var(--ink-soft); border-radius: 2px; padding: 10px 34px 12px; transition: background .4s, color .4s, transform 0.2s var(--spring); }
+.bindery-continue:hover { background: var(--ink); color: var(--bone); transform: translateY(-2px); }
 .bindery-continue:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .bindery-back { display: block; margin: 26px auto 0; }
 
-/* ================================================================
-   CLOSING RITUAL — elastic entrance
-   ================================================================ */
 .veil {
   position: fixed; inset: 0;
   z-index: 80;
@@ -851,23 +909,19 @@ input, textarea { font: inherit; color: inherit; }
   width: 92%;
   text-align: center;
   box-shadow: 0 30px 80px rgba(20,14,8,0.45);
-  transform: translateY(14px) scale(0.96);
+  transform: translateY(14px) scale(0.96) rotateX(5deg);
   transition: transform .65s cubic-bezier(0.34, 1.56, 0.64, 1), background var(--theme-speed);
 }
-.veil.here .ritual-card { transform: translateY(0) scale(1); }
+.veil.here .ritual-card { transform: translateY(0) scale(1) rotateX(0deg); }
 .ritual-q { font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: 26px; line-height: 1.35; margin-bottom: 8px; }
 .ritual-sub { font-style: italic; font-size: 14.5px; color: var(--graphite); margin-bottom: 34px; }
 .ritual-pigments { display:flex; justify-content:center; gap: 16px; margin-bottom: 36px; }
 .ritual-pigments .pigment-dot { width: 34px; height: 34px; }
 .ritual-skip { display: block; margin: 0 auto; }
 
-/* Inline confirm */
 .inline-confirm { font-size: 12.5px; font-style: italic; color: var(--clay); }
 .inline-confirm button { font-size: 12.5px; font-style: italic; color: var(--clay); text-decoration: underline; margin-left: 6px; }
 
-/* ================================================================
-   RESPONSIVE
-   ================================================================ */
 @media (max-width: 900px) {
   .contents-col { display: none; }
   .contents-col.opened {
@@ -884,32 +938,34 @@ input, textarea { font: inherit; color: inherit; }
   .library-inner { padding: 40px 22px 0; }
   .desk-layout { padding: 40px 16px 110px; }
   .theme-label { display: none; }
+  .ink-cursor { display: none; }
 }
 
-/* ================================================================
-   ACCESSIBILITY
-   ================================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   .threshold-date, .threshold-line, .threshold-hint { opacity: 1; animation: none; }
   .dust { display: none; }
   .spine-new { animation: none; }
+  .cursor-glow { display: none; }
+  .vignette { display: none; }
 }
 </style>
+<base target="_blank">
 </head>
 <body data-theme="afternoon">
 
 <div class="lamplight" aria-hidden="true"></div>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
 <div class="dust-layer" id="dustLayer" aria-hidden="true"></div>
+<div class="ink-cursor" id="inkCursor" aria-hidden="true"></div>
 
-<!-- THE THRESHOLD -->
 <div class="room here" id="threshold" role="button" tabindex="0" aria-label="Enter the writing room">
   <div class="threshold-date" id="thresholdDate"></div>
   <div class="threshold-line" id="thresholdLine">The lamp is on.</div>
   <div class="threshold-hint">touch anywhere to enter</div>
 </div>
 
-<!-- THE LIBRARY -->
 <div class="room" id="library">
   <div class="library-inner">
     <div class="library-masthead">
@@ -922,10 +978,8 @@ input, textarea { font: inherit; color: inherit; }
   </div>
 </div>
 
-<!-- BOOK TRANSIT -->
 <div id="bookTransit" aria-hidden="true"></div>
 
-<!-- THE DESK -->
 <div class="room" id="desk">
   <div class="desk-actions">
     <div style="display:flex; gap:26px;">
@@ -947,7 +1001,8 @@ input, textarea { font: inherit; color: inherit; }
       <div class="contents-meta" id="contentsMeta"></div>
       <div class="thread" aria-hidden="true"><div class="thread-stitch" id="threadStitch" style="width:0%"></div></div>
     </nav>
-    <div class="sheet">
+    <div class="sheet" id="manuscriptSheet">
+      <div class="sheet-curl" aria-hidden="true"></div>
       <div class="sheet-work-title" id="sheetWorkTitle"></div>
       <input class="sheet-chapter-title" id="chapterTitleInput" placeholder="A chapter without a name" aria-label="Chapter title" oninput="onWrite()">
       <div class="sheet-ornament" aria-hidden="true"><span></span></div>
@@ -960,7 +1015,6 @@ input, textarea { font: inherit; color: inherit; }
   </div>
 </div>
 
-<!-- READING MODE -->
 <div class="room" id="reading" aria-label="Reading mode">
   <button class="pencil-action reading-close" onclick="leaveReading()">close the book</button>
   <button class="reading-nav prev" onclick="turnPage(-1)" aria-label="Previous chapter">‹</button>
@@ -971,7 +1025,6 @@ input, textarea { font: inherit; color: inherit; }
   <div class="reading-folio" id="readingFolio"></div>
 </div>
 
-<!-- THE BINDERY -->
 <div class="room" id="bindery">
   <div class="bindery-inner">
     <div class="bindery-step" id="bindStep1">
@@ -997,7 +1050,6 @@ input, textarea { font: inherit; color: inherit; }
   </div>
 </div>
 
-<!-- CLOSING RITUAL -->
 <div class="veil" id="ritualVeil" role="dialog" aria-label="Before you go">
   <div class="ritual-card">
     <div class="ritual-q">Before you go — <br>what colour was today?</div>
@@ -1007,7 +1059,6 @@ input, textarea { font: inherit; color: inherit; }
   </div>
 </div>
 
-<!-- ROOM CORNER -->
 <div class="room-corner">
   <div>
     <button id="soundToggle" onclick="toggleSound()" aria-pressed="false">the room is silent</button>
@@ -1022,9 +1073,7 @@ input, textarea { font: inherit; color: inherit; }
 </div>
 
 <script>
-/* ================================================================
-   STORAGE
-   ================================================================ */
+
 const KEY = 'folioOS_room_v2';
 let memoryStore = null;
 function loadState() {
@@ -1060,9 +1109,6 @@ function seedState() {
 }
 let S = loadState();
 
-/* ================================================================
-   THEME SYSTEM — Dawn, Afternoon, Dusk, Night
-   ================================================================ */
 const THRESHOLD_MSGS = {
   dawn: 'The first light is here.',
   afternoon: 'The lamp is on.',
@@ -1075,7 +1121,7 @@ function setTheme(t) {
   S.theme = t;
   saveState(S);
   document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === t));
-  spawnDust(); // dust responds to new light
+  spawnDust();
 }
 
 function autoTheme() {
@@ -1086,15 +1132,12 @@ function autoTheme() {
   return 'night';
 }
 
-/* ================================================================
-   DUST PARTICLES
-   ================================================================ */
 let dustSpawned = false;
 function spawnDust() {
   const layer = document.getElementById('dustLayer');
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   layer.innerHTML = '';
-  const count = 18;
+  const count = 24;
   for (let i = 0; i < count; i++) {
     const d = document.createElement('div');
     d.className = 'dust';
@@ -1102,8 +1145,8 @@ function spawnDust() {
     const y = Math.random() * 100;
     const dur = 12 + Math.random() * 20;
     const delay = Math.random() * dur;
-    const dx = (Math.random() - 0.5) * 160;
-    const dy = -40 - Math.random() * 80;
+    const dx = (Math.random() - 0.5) * 200;
+    const dy = -40 - Math.random() * 100;
     const size = 1.5 + Math.random() * 2.5;
     d.style.cssText = 'left:'+x+'%;top:'+y+'%;width:'+size+'px;height:'+size+'px;animation-duration:'+dur+'s;animation-delay:-'+delay+'s;--dx:'+dx+'px;--dy:'+dy+'px;';
     layer.appendChild(d);
@@ -1111,24 +1154,45 @@ function spawnDust() {
   dustSpawned = true;
 }
 
-/* ================================================================
-   SOUND
-   ================================================================ */
 let audioCtx = null;
 function paperSound(kind) {
   if (!S.sound) return;
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const dur = kind === 'turn' ? 0.14 : 0.2;
+    const dur = kind === 'turn' ? 0.14 : kind === 'open' ? 0.25 : 0.18;
     const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
     const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) { const t = i / d.length; d[i] = (Math.random()*2-1)*Math.pow(1-t,2.2)*0.5; }
+    for (let i = 0; i < d.length; i++) {
+       const t = i / d.length;
+       d[i] = (Math.random()*2-1)*Math.pow(1-t,2.2)*0.5;
+     }
     const src = audioCtx.createBufferSource(); src.buffer = buf;
-    const flt = audioCtx.createBiquadFilter(); flt.type='lowpass'; flt.frequency.value = kind==='turn'?2600:1600;
-    const gn = audioCtx.createGain(); gn.gain.value = 0.16;
-    src.connect(flt); flt.connect(gn); gn.connect(audioCtx.destination); src.start();
+    const flt = audioCtx.createBiquadFilter();
+     flt.type='lowpass';
+     flt.frequency.value = kind==='turn'?2600: kind==='open'?1800:1600;
+    const gn = audioCtx.createGain();
+     gn.gain.value = kind==='open'?0.12:0.16;
+    src.connect(flt); flt.connect(gn); gn.connect(audioCtx.destination);
+     src.start();
   } catch(e){}
 }
+
+function shelfCreak() {
+  if (!S.sound || !audioCtx) return;
+  try {
+    const dur = 0.4;
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) {
+      const t = i / d.length;
+      d[i] = Math.sin(t * Math.PI * 2 * 80) * Math.pow(1-t, 3) * 0.03 * (Math.random()*0.5+0.5);
+    }
+    const src = audioCtx.createBufferSource(); src.buffer = buf;
+    const gn = audioCtx.createGain(); gn.gain.value = 0.08;
+    src.connect(gn); gn.connect(audioCtx.destination); src.start();
+  } catch(e){}
+}
+
 function toggleSound() {
   S.sound = !S.sound; saveState(S);
   const b = document.getElementById('soundToggle');
@@ -1137,9 +1201,6 @@ function toggleSound() {
   if (S.sound) paperSound('turn');
 }
 
-/* ================================================================
-   PIGMENTS & KINDS
-   ================================================================ */
 const PIGMENTS = [
   {id:'clay',name:'Clay',hex:'#9E5236'},{id:'ochre',name:'Ochre',hex:'#B08744'},
   {id:'moss',name:'Moss',hex:'#67714F'},{id:'indigo',name:'Indigo',hex:'#39424F'},
@@ -1150,9 +1211,6 @@ const KINDS = [
   {id:'Essays',pigment:'moss'},{id:'Letters',pigment:'ochre'},{id:'Dreams',pigment:'indigo'},{id:'Lyrics',pigment:'clay'}
 ];
 
-/* ================================================================
-   HELPERS
-   ================================================================ */
 const $ = id => document.getElementById(id);
 function wordsOf(ch){return ch.content&&ch.content.trim()?ch.content.trim().split(/\s+/).length:0;}
 function workWords(w){return w.chapters.reduce((n,c)=>n+wordsOf(c),0);}
@@ -1168,26 +1226,151 @@ function greeting(){
   return'Good evening. The lamp has been waiting.';
 }
 
-/* ================================================================
-   ROOMS
-   ================================================================ */
+class TextScramble {
+  constructor(el) {
+    this.el = el;
+    this.chars = '!<>-_\\/[]{}—=+*^?#________';
+    this.update = this.update.bind(this);
+  }
+  setText(newText) {
+    const oldText = this.el.innerText;
+    const length = Math.max(oldText.length, newText.length);
+    const promise = new Promise((resolve) => this.resolve = resolve);
+    this.queue = [];
+    for (let i = 0; i < length; i++) {
+      const from = oldText[i] || '';
+      const to = newText[i] || '';
+      const start = Math.floor(Math.random() * 20);
+      const end = start + Math.floor(Math.random() * 20);
+      this.queue.push({ from, to, start, end });
+    }
+    cancelAnimationFrame(this.frameRequest);
+    this.frame = 0;
+    this.update();
+    return promise;
+  }
+  update() {
+    let output = '';
+    let complete = 0;
+    for (let i = 0, n = this.queue.length; i < n; i++) {
+      let { from, to, start, end, char } = this.queue[i];
+      if (this.frame >= end) {
+        complete++;
+        output += to;
+      } else if (this.frame >= start) {
+        if (!char || Math.random() < 0.28) {
+          char = this.chars[Math.floor(Math.random() * this.chars.length)];
+          this.queue[i].char = char;
+        }
+        output += '<span style="opacity:0.6">'+char+'</span>';
+      } else {
+        output += from;
+      }
+    }
+    this.el.innerHTML = output;
+    if (complete === this.queue.length) {
+      this.resolve();
+    } else {
+      this.frameRequest = requestAnimationFrame(this.update);
+      this.frame++;
+    }
+  }
+}
+
+let mouseX = 0, mouseY = 0;
+let cursorGlowX = 0, cursorGlowY = 0;
+let inkCursorX = 0, inkCursorY = 0;
+
+function initMouseSystem() {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateGlow() {
+    cursorGlowX += (mouseX - cursorGlowX) * 0.08;
+    cursorGlowY += (mouseY - cursorGlowY) * 0.08;
+    const glow = $('cursorGlow');
+    if (glow) {
+      glow.style.left = cursorGlowX + 'px';
+      glow.style.top = cursorGlowY + 'px';
+    }
+    requestAnimationFrame(animateGlow);
+  }
+  animateGlow();
+
+  function animateInkCursor() {
+    inkCursorX += (mouseX - inkCursorX) * 0.15;
+    inkCursorY += (mouseY - inkCursorY) * 0.15;
+    const cursor = $('inkCursor');
+    if (cursor) {
+      cursor.style.left = inkCursorX + 'px';
+      cursor.style.top = inkCursorY + 'px';
+    }
+    requestAnimationFrame(animateInkCursor);
+  }
+  animateInkCursor();
+
+  document.addEventListener('mouseover', (e) => {
+    const cursor = $('inkCursor');
+    if (!cursor) return;
+    const isClickable = e.target.closest('button, a, input, textarea, .spine, .desk-memory, .kind-book, .pigment-dot');
+    if (isClickable) {
+      cursor.classList.add('hovering');
+      cursor.classList.remove('writing');
+    } else if (e.target.closest('#sheetBody, #chapterTitleInput')) {
+      cursor.classList.add('writing');
+      cursor.classList.remove('hovering');
+    } else {
+      cursor.classList.remove('hovering', 'writing');
+    }
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    const shelves = document.querySelectorAll('.shelf-books');
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx;
+    const dy = (e.clientY - cy) / cy;
+    shelves.forEach((shelf, i) => {
+      const depth = (i + 1) * 2;
+      shelf.style.transform = 'translateX('+(dx * depth)+'px) translateY('+(dy * depth * 0.5)+'px)';
+    });
+  });
+
+  $('manuscriptSheet').addEventListener('click', (e) => {
+    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    const ripple = document.createElement('div');
+    ripple.className = 'ink-ripple';
+    const rect = $('manuscriptSheet').getBoundingClientRect();
+    ripple.style.left = (e.clientX - rect.left - 10) + 'px';
+    ripple.style.top = (e.clientY - rect.top - 10) + 'px';
+    ripple.style.width = '20px';
+    ripple.style.height = '20px';
+    $('manuscriptSheet').appendChild(ripple);
+    setTimeout(() => ripple.remove(), 800);
+  });
+}
+
 function goRoom(id){
   document.querySelectorAll('.room').forEach(r=>r.classList.remove('here'));
   const room=$(id); room.classList.add('here'); room.scrollTop=0;
 }
 
-/* ================================================================
-   THE THRESHOLD
-   ================================================================ */
 (function initThreshold(){
   const now=new Date();
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   $('thresholdDate').textContent=days[now.getDay()]+' · '+now.getDate()+' '+months[now.getMonth()];
-  // set initial theme
   const theme = S.theme || autoTheme();
   setTheme(theme);
-  $('thresholdLine').textContent = THRESHOLD_MSGS[theme] || 'The lamp is on.';
+
+  const lineEl = $('thresholdLine');
+  const scrambler = new TextScramble(lineEl);
+  setTimeout(() => {
+    scrambler.setText(THRESHOLD_MSGS[theme] || 'The lamp is on.');
+  }, 300);
+
   const enter=()=>{
     const t=$('threshold');
     if(t.classList.contains('leaving'))return;
@@ -1200,9 +1383,6 @@ function goRoom(id){
   setTimeout(enter,4200);
 })();
 
-/* ================================================================
-   THE LIBRARY
-   ================================================================ */
 function spineWidth(w){const words=workWords(w);return Math.min(64,36+Math.floor(words/260));}
 function spineHeight(w){const base={Novel:178,Journal:158,Poetry:150,Essays:164,Letters:152,Dreams:156,Lyrics:148};return base[w.kind]||160;}
 
@@ -1257,6 +1437,7 @@ function makeSpine(w){
   b.setAttribute('aria-label',w.title+', '+w.kind+', '+workWords(w).toLocaleString()+' words. Open.');
   b.innerHTML='<span class="spine-title">'+esc(w.title)+'</span><span class="spine-year">'+(w.year||'')+'</span>'+(w.status==='complete'?'<span class="spine-ribbon" aria-hidden="true"></span>':'');
   b.onclick=()=>openBookFrom(b,w.id,null);
+  b.addEventListener('mouseenter', () => { if (Math.random() > 0.6) shelfCreak(); });
   return b;
 }
 
@@ -1268,9 +1449,6 @@ function makeNewSpine(){
   return b;
 }
 
-/* ================================================================
-   BOOK OPENING
-   ================================================================ */
 let reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function openBookFrom(el,workId,chapterId){
@@ -1302,9 +1480,6 @@ function openBookFrom(el,workId,chapterId){
   setTimeout(()=>{transit.classList.remove('playing');transit.innerHTML='';},1900);
 }
 
-/* ================================================================
-   THE DESK
-   ================================================================ */
 let saveTimer=null,keptTimer=null,writeTimer=null;
 
 function renderDesk(){
@@ -1349,11 +1524,9 @@ function onWrite(){
   ch.content=$('sheetBody').value;
   if(w.status==='draft'&&workWords(w)>0)w.status='writing';
   renderMarginNotes();
-  // Writing indicator
   $('writingIndicator').classList.add('active');
   clearTimeout(writeTimer);
   writeTimer=setTimeout(()=>$('writingIndicator').classList.remove('active'),1200);
-  // Save
   clearTimeout(saveTimer);
   saveTimer=setTimeout(()=>{
     saveState(S);
@@ -1437,9 +1610,6 @@ function finishRitual(colorName){
 
 function returnToLibrary(){paperSound('open');renderLibrary();goRoom('library');}
 
-/* ================================================================
-   READING MODE
-   ================================================================ */
 let readingIndex=0;
 function enterReading(){saveState(S);const w=currentWork();readingIndex=Math.max(0,w.chapters.findIndex(c=>c.id===S.currentChapterId));renderReadingPage();goRoom('reading');}
 function leaveReading(){goRoom('desk');}
@@ -1468,9 +1638,6 @@ function turnPage(dir){
   },380);
 }
 
-/* ================================================================
-   THE BINDERY
-   ================================================================ */
 let binding={kind:null,title:'',pigment:'clay'};
 function enterBindery(){binding={kind:null,title:'',pigment:'clay'};renderKindShelf();renderPigmentRow();bindStepTo(1);goRoom('bindery');}
 function leaveBindery(){renderLibrary();goRoom('library');}
@@ -1517,9 +1684,6 @@ function placeOnShelf(){
   setTimeout(()=>$('sheetBody').focus(),700);
 }
 
-/* ================================================================
-   KEYBOARD
-   ================================================================ */
 document.addEventListener('keydown',(e)=>{
   const readingHere=$('reading').classList.contains('here');
   if(readingHere){
@@ -1535,11 +1699,9 @@ document.addEventListener('keydown',(e)=>{
   }
 });
 
-/* ================================================================
-   BEGIN
-   ================================================================ */
 if(S.sound){const b=document.getElementById('soundToggle');b.textContent='the room has sound';b.setAttribute('aria-pressed','true');}
 spawnDust();
+initMouseSystem();
 renderLibrary();
 </script>
 </body>
