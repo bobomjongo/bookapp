@@ -3,559 +3,1640 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FolioOS</title>
+<title>FolioOS — The Writing Room</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --ink: #0f0d0a;
-    --deep: #1a1612;
-    --bark: #2c2318;
-    --kente-gold: #c8922a;
-    --dusty-amber: #e8b86d;
-    --palm-green: #3d5a3e;
-    --terracotta: #b5533c;
-    --cream: #f5efe6;
-    --parchment: #ede3d4;
-    --smoke: #8c7d6e;
-    --ghost: #4a3f35;
-  }
-  body {
-    background: var(--ink);
-    font-family: 'Space Grotesk', sans-serif;
-    color: var(--cream);
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  .topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 28px;
-    height: 52px;
-    background: var(--deep);
-    border-bottom: 1px solid var(--ghost);
-    flex-shrink: 0;
-  }
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--kente-gold);
-    letter-spacing: 0.04em;
-  }
-  .logo span { color: var(--cream); font-weight: 400; font-style: italic; }
-  .nav-tabs { display: flex; gap: 4px; }
-  .nav-tab {
-    padding: 6px 18px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--smoke);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.03em;
-    background: transparent;
-    border: none;
-    font-family: 'Space Grotesk', sans-serif;
-  }
-  .nav-tab:hover { color: var(--cream); background: var(--ghost); }
-  .nav-tab.active { color: var(--ink); background: var(--kente-gold); }
-  .new-btn {
-    background: var(--terracotta);
-    color: var(--cream);
-    border: none;
-    padding: 7px 16px;
-    border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: all 0.2s;
-  }
-  .new-btn:hover { background: #c85f44; }
-  .main { display: flex; flex: 1; overflow: hidden; }
-  .shelf-view {
-    flex: 1;
-    overflow-y: auto;
-    padding: 36px 40px;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-  .shelf-view::-webkit-scrollbar { width: 4px; }
-  .shelf-view::-webkit-scrollbar-thumb { background: var(--ghost); border-radius: 2px; }
-  .shelf-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--ghost);
-    padding-bottom: 16px;
-  }
-  .shelf-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    font-weight: 400;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--smoke);
-  }
-  .shelf-count { font-size: 12px; color: var(--ghost); letter-spacing: 0.06em; }
-  .book-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 28px 20px;
-    margin-top: 20px;
-  }
-  .book-item {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.2s;
-  }
-  .book-item:hover { transform: translateY(-4px); }
-  .book-item:hover .book-cover { box-shadow: 0 16px 40px rgba(0,0,0,0.7), 4px 4px 0 var(--kente-gold); }
-  .book-cover {
-    width: 100%;
-    aspect-ratio: 2/3;
-    border-radius: 3px 6px 6px 3px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 4px 4px 20px rgba(0,0,0,0.6), inset -3px 0 8px rgba(0,0,0,0.4);
-    transition: box-shadow 0.25s;
-  }
-  .book-cover::before {
-    content: '';
-    position: absolute;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500&display=swap');
+
+/* ================================================================
+   FOLIOOS — PIGMENT & MATERIAL TOKENS
+   Named after pigments, never after UI colours.
+   ================================================================ */
+:root {
+  /* Papers */
+  --paper:        #EFE6D8;   /* the room's walls — warm, aged */
+  --paper-deep:   #E6DBC9;   /* desk surface, lower light */
+  --bone:         #FAF5EB;   /* the manuscript page itself */
+  --linen:        #E9DFCE;   /* blank notebook cloth */
+
+  /* Inks */
+  --ink:          #2A2219;   /* never pure black */
+  --ink-soft:     #5E5344;   /* secondary text, pencil */
+  --graphite:     #8B7E6B;   /* faint annotations */
+  --rule:         #D9CDB9;   /* almost invisible rules */
+
+  /* Earth pigments — book cloth */
+  --clay:         #9E5236;
+  --ochre:        #B08744;
+  --moss:         #67714F;
+  --indigo:       #39424F;
+  --mulberry:     #6D4650;
+  --umber:        #55402C;
+
+  /* Wood */
+  --walnut:       #4A3523;
+  --walnut-deep:  #332415;
+  --brass:        #A88A52;
+
+  /* Timing — paper physics */
+  --glide: cubic-bezier(0.22, 1, 0.36, 1);
+  --settle: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'EB Garamond', serif;
+  font-size: 17px;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Paper grain over everything — the room has texture */
+body::before {
+  content:'';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 200;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The lamp — one warm light source, upper area of the room */
+.lamplight {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -8%, rgba(215,178,110,0.28), transparent 60%),
+    radial-gradient(ellipse 130% 90% at 50% 115%, rgba(51,36,21,0.16), transparent 62%);
+}
+
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; }
+
+::selection { background: rgba(176,135,68,0.25); }
+
+/* Small-caps wayfinding — brass plates, blind stamps */
+.smallcaps {
+  font-family: 'EB Garamond', serif;
+  font-variant: all-small-caps;
+  letter-spacing: 0.22em;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+/* Quiet text actions — never buttons, always pencil notes */
+.pencil-action {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: var(--ink-soft);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+  transition: color .3s var(--glide), border-color .3s var(--glide);
+}
+.pencil-action:hover { color: var(--ink); border-bottom-color: var(--rule); }
+.pencil-action:focus-visible { outline: 2px solid var(--ochre); outline-offset: 4px; border-radius: 2px; }
+
+/* ================================================================
+   VIEWS — rooms, not pages
+   ================================================================ */
+.room {
+  position: fixed; inset: 0;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .7s var(--glide), visibility .7s;
+  z-index: 2;
+}
+.room.here { opacity: 1; visibility: visible; }
+.room::-webkit-scrollbar { width: 6px; }
+.room::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+.room::-webkit-scrollbar-track { background: transparent; }
+
+/* ================================================================
+   THE THRESHOLD — entering the room
+   ================================================================ */
+#threshold {
+  z-index: 100;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--paper);
+  cursor: pointer;
+  text-align: center;
+  gap: 18px;
+}
+.threshold-date {
+  font-family: 'EB Garamond', serif;
+  font-variant: all-small-caps;
+  letter-spacing: 0.3em;
+  font-size: 16px;
+  color: var(--graphite);
+  opacity: 0;
+  animation: breatheIn 1.6s var(--glide) .2s forwards;
+}
+.threshold-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 30px;
+  font-weight: 500;
+  color: var(--ink);
+  opacity: 0;
+  animation: breatheIn 1.8s var(--glide) .9s forwards;
+}
+.threshold-hint {
+  position: absolute;
+  bottom: 44px;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--graphite);
+  opacity: 0;
+  animation: breatheIn 1.4s var(--glide) 2s forwards;
+}
+@keyframes breatheIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+#threshold.leaving { animation: thresholdOut 1s var(--glide) forwards; }
+@keyframes thresholdOut { to { opacity: 0; visibility: hidden; } }
+
+/* ================================================================
+   THE LIBRARY
+   ================================================================ */
+#library { padding: 0 0 90px; }
+
+.library-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 54px 48px 0;
+}
+
+.library-masthead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.wordmark {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: 0.34em;
+  color: var(--ink);
+  text-transform: uppercase;
+  /* blind stamp — pressed into the paper */
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+  opacity: 0.85;
+}
+.wordmark em { font-style: normal; color: var(--ochre); }
+
+.library-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--ink-soft);
+  margin: 4px 0 40px;
+}
+
+/* The desk remembers — continuity card */
+.desk-memory {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bone);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 16px 22px;
+  margin-bottom: 56px;
+  box-shadow: 0 2px 10px rgba(51,36,21,0.07), 0 12px 30px rgba(51,36,21,0.05);
+  cursor: pointer;
+  transition: transform .5s var(--glide), box-shadow .5s var(--glide);
+  text-align: left;
+}
+.desk-memory:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(51,36,21,0.09), 0 18px 40px rgba(51,36,21,0.07); }
+.desk-memory:focus-visible { outline: 2px solid var(--ochre); outline-offset: 4px; }
+.desk-memory .dm-ribbon {
+  width: 3px; height: 40px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.dm-label { font-variant: all-small-caps; letter-spacing: 0.2em; font-size: 13px; color: var(--graphite); margin-bottom: 2px; }
+.dm-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--ink); line-height: 1.2; }
+.dm-sub { font-size: 14px; font-style: italic; color: var(--ink-soft); margin-top: 2px; }
+
+/* Shelf labels — brass plates screwed to the wood */
+.shelf-plate {
+  display: inline-block;
+  font-variant: all-small-caps;
+  letter-spacing: 0.26em;
+  font-size: 13.5px;
+  color: #6b5636;
+  background: linear-gradient(180deg, #cbb27f, #a88a52);
+  border: 1px solid #8f7442;
+  border-radius: 2px;
+  padding: 2px 14px 3px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(51,36,21,0.3);
+  margin-bottom: 14px;
+}
+
+/* The shelf — books stand as spines on wood */
+.shelf { margin-bottom: 64px; }
+.shelf-books {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  padding: 0 18px;
+  min-height: 196px;
+  position: relative;
+}
+.shelf-wood {
+  height: 14px;
+  background: linear-gradient(180deg, #5d442c 0%, var(--walnut) 30%, var(--walnut-deep) 100%);
+  border-top: 1px solid #7a5c3b;
+  border-radius: 1px;
+  box-shadow: 0 8px 18px rgba(51,36,21,0.28), 0 2px 4px rgba(51,36,21,0.3);
+  position: relative;
+}
+.shelf-wood::after { /* wood grain */
+  content:''; position:absolute; inset:0;
+  background: repeating-linear-gradient(90deg, transparent 0 46px, rgba(0,0,0,0.08) 46px 48px);
+  opacity: .5;
+}
+
+/* A spine */
+.spine {
+  position: relative;
+  border-radius: 2px 2px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+  cursor: pointer;
+  transition: transform .45s var(--glide), box-shadow .45s var(--glide);
+  transform-origin: bottom center;
+  box-shadow:
+    inset 2px 0 3px rgba(255,255,255,0.14),
+    inset -3px 0 5px rgba(0,0,0,0.28),
+    1px 0 2px rgba(51,36,21,0.35);
+  flex-shrink: 0;
+}
+/* book cloth weave */
+.spine::before {
+  content:''; position:absolute; inset:0; border-radius: inherit;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+}
+/* head & tail bands */
+.spine::after {
+  content:''; position:absolute; left:3px; right:3px; top:3px; height:3px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(90deg, rgba(250,245,235,0.65) 0 3px, rgba(42,34,25,0.5) 3px 6px);
+  pointer-events:none;
+}
+.spine:hover, .spine:focus-visible { transform: translateY(-14px); box-shadow: inset 2px 0 3px rgba(255,255,255,0.14), inset -3px 0 5px rgba(0,0,0,0.28), 0 18px 26px rgba(51,36,21,0.35); }
+.spine:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
+.spine.aged { filter: saturate(0.86) brightness(0.94); } /* books written over years darken */
+
+.spine-title {
+  writing-mode: vertical-rl;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  color: rgba(250,245,235,0.92);
+  max-height: 122px;
+  overflow: hidden;
+  text-shadow: 0 0 1px rgba(0,0,0,0.4);
+}
+.spine-year {
+  font-family: 'EB Garamond', serif;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: rgba(250,245,235,0.6);
+}
+/* the ribbon of a finished work, peeking below the text block */
+.spine-ribbon {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 7px; height: 15px;
+  background: linear-gradient(180deg, #c8a35a, #a88a52);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+  box-shadow: 0 1px 2px rgba(51,36,21,0.4);
+}
+/* pigment cloths */
+.cloth-clay     { background: linear-gradient(90deg, #b06040 0%, var(--clay) 45%, #7e3f28 100%); }
+.cloth-ochre    { background: linear-gradient(90deg, #c49a54 0%, var(--ochre) 45%, #8d6a32 100%); }
+.cloth-moss     { background: linear-gradient(90deg, #78825e 0%, var(--moss) 45%, #4d5539 100%); }
+.cloth-indigo   { background: linear-gradient(90deg, #4a5566 0%, var(--indigo) 45%, #272e38 100%); }
+.cloth-mulberry { background: linear-gradient(90deg, #7e5560 0%, var(--mulberry) 45%, #4f3138 100%); }
+.cloth-umber    { background: linear-gradient(90deg, #6a5138 0%, var(--umber) 45%, #3c2c1e 100%); }
+
+/* a blank notebook waiting to be bound */
+.spine-new {
+  width: 40px; height: 150px;
+  background: var(--linen);
+  border: 1px solid var(--rule);
+  border-bottom: none;
+  border-radius: 2px 2px 0 0;
+  display:flex; align-items:center; justify-content:center;
+  color: var(--graphite);
+  font-size: 20px;
+  font-family: 'Cormorant Garamond', serif;
+  cursor: pointer;
+  transition: transform .45s var(--glide), color .45s, box-shadow .45s var(--glide);
+  flex-shrink:0;
+  box-shadow: inset -2px 0 4px rgba(51,36,21,0.08);
+}
+.spine-new:hover, .spine-new:focus-visible { transform: translateY(-10px); color: var(--ink-soft); box-shadow: 0 14px 22px rgba(51,36,21,0.2); }
+.spine-new:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; }
+.spine-new span { writing-mode: vertical-rl; font-style: italic; font-size: 13px; letter-spacing: .1em; margin-top:6px; }
+
+/* Empty library */
+.empty-library {
+  text-align: center;
+  padding: 30px 0 8px;
+}
+.empty-library h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-style: italic;
+  font-size: 30px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+.empty-library p { font-size: 16px; color: var(--graphite); font-style: italic; }
+
+/* Room footer — quiet corner controls */
+.room-corner {
+  position: fixed;
+  bottom: 22px; right: 28px;
+  z-index: 50;
+  display: flex; gap: 22px;
+  font-size: 13px; font-style: italic; color: var(--graphite);
+}
+.room-corner button { font-size: 13px; font-style: italic; color: var(--graphite); transition: color .3s; }
+.room-corner button:hover { color: var(--ink-soft); }
+.room-corner button:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius:2px; }
+
+/* ================================================================
+   BOOK OPENING — the transition between library and desk
+   ================================================================ */
+#bookTransit {
+  position: fixed; inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: none;
+  perspective: 1600px;
+}
+#bookTransit.playing { display: block; }
+.transit-book {
+  position: absolute;
+  border-radius: 3px 8px 8px 3px;
+  transform-style: preserve-3d;
+  box-shadow: 0 30px 70px rgba(51,36,21,0.4);
+}
+.transit-cover {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  transition: transform .9s var(--glide);
+}
+.transit-cover .tc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: rgba(250,245,235,0.95);
+  text-align: center;
+  line-height: 1.25;
+  border: 1px solid rgba(250,245,235,0.35);
+  padding: 18px 14px;
+  width: 100%;
+}
+.transit-page {
+  position: absolute; inset: 0;
+  background: var(--bone);
+  border-radius: inherit;
+  transform: translateZ(-1px);
+}
+
+/* ================================================================
+   THE DESK — where writing happens
+   ================================================================ */
+#desk { background: var(--paper-deep); }
+.desk-layout {
+  display: flex;
+  justify-content: center;
+  gap: 44px;
+  padding: 46px 40px 120px;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+/* Contents — the margin column */
+.contents-col {
+  width: 208px;
+  flex-shrink: 0;
+  padding-top: 66px;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+.contents-col::-webkit-scrollbar { display:none; }
+.contents-label { margin-bottom: 16px; display:block; }
+.contents-item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 7px 2px;
+  border-bottom: 1px solid transparent;
+  transition: border-color .3s;
+}
+.contents-item:hover { border-bottom-color: var(--rule); }
+.contents-item:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; border-radius: 2px; }
+.ci-numeral {
+  font-family: 'EB Garamond', serif;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  color: var(--graphite);
+  min-width: 26px;
+  font-variant-numeric: oldstyle-nums;
+}
+.ci-name {
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+  color: var(--ink-soft);
+  line-height: 1.35;
+  flex: 1;
+}
+.contents-item.reading-now .ci-name { color: var(--ink); font-weight: 600; }
+.contents-item.reading-now .ci-numeral { color: var(--clay); }
+.ci-words { font-size: 11px; color: var(--graphite); font-style: italic; }
+.contents-new { margin-top: 14px; display: block; }
+.contents-divider { height: 1px; background: var(--rule); margin: 26px 0 18px; }
+.contents-meta { font-size: 13px; font-style: italic; color: var(--graphite); line-height: 1.7; }
+.contents-meta b { font-weight: 600; color: var(--ink-soft); font-style: normal; }
+
+/* thread of progress — a stitched line, not a bar */
+.thread {
+  margin-top: 10px;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--rule) 0 5px, transparent 5px 9px);
+  position: relative;
+  border-radius: 1px;
+}
+.thread-stitch {
+  position: absolute; left:0; top:0; bottom:0;
+  background: repeating-linear-gradient(90deg, var(--ochre) 0 5px, transparent 5px 9px);
+  border-radius: 1px;
+  transition: width 1s var(--glide);
+}
+
+/* The manuscript sheet */
+.sheet {
+  background: var(--bone);
+  width: 100%;
+  max-width: 700px;
+  min-height: calc(100vh - 90px);
+  border-radius: 2px;
+  padding: 74px 84px 90px;
+  box-shadow:
+    0 1px 2px rgba(51,36,21,0.12),
+    0 14px 44px rgba(51,36,21,0.14),
+    0 40px 90px rgba(51,36,21,0.1);
+  position: relative;
+}
+/* deckle edge suggestion */
+.sheet::after {
+  content:''; position:absolute; left:0; right:0; bottom:-3px; height:3px;
+  background: linear-gradient(180deg, rgba(51,36,21,0.1), transparent);
+  border-radius: 0 0 2px 2px;
+}
+.sheet-work-title {
+  text-align: center;
+  font-variant: all-small-caps;
+  letter-spacing: 0.32em;
+  font-size: 14.5px;
+  color: var(--graphite);
+  margin-bottom: 26px;
+}
+.sheet-chapter-title {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 33px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  outline: none;
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+.sheet-chapter-title::placeholder { color: var(--rule); font-style: italic; }
+.sheet-ornament {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  margin-bottom: 44px;
+}
+.sheet-ornament::before, .sheet-ornament::after {
+  content:''; width: 74px; height: 1px; background: var(--rule);
+}
+.sheet-ornament span {
+  width: 6px; height: 6px;
+  background: var(--ochre);
+  transform: rotate(45deg);
+}
+.sheet-body {
+  width: 100%;
+  min-height: 46vh;
+  border: none;
+  outline: none;
+  background: transparent;
+  resize: none;
+  font-family: 'EB Garamond', serif;
+  font-size: 19px;
+  line-height: 1.95;
+  color: var(--ink);
+  letter-spacing: 0.005em;
+  caret-color: var(--clay);
+}
+.sheet-body::placeholder { color: var(--graphite); font-style: italic; opacity: .7; }
+
+.sheet-margin-note {
+  position: absolute;
+  bottom: 34px; left: 84px; right: 84px;
+  display: flex; justify-content: space-between;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--graphite);
+}
+#keptNote { transition: opacity 1.2s var(--glide); opacity: 0; }
+#keptNote.shown { opacity: 1; }
+
+/* Desk header — floating quiet actions */
+.desk-actions {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  pointer-events: none;
+}
+.desk-actions > * { pointer-events: auto; }
+.desk-actions .right-group { display: flex; gap: 26px; }
+
+/* Contents toggle for narrow rooms */
+.contents-toggle { display: none; }
+
+/* ================================================================
+   READING MODE — the typeset book
+   ================================================================ */
+#reading { background: var(--paper-deep); z-index: 60; }
+.reading-stage {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 20px;
+  perspective: 2000px;
+}
+.reading-page {
+  background: var(--bone);
+  width: 100%;
+  max-width: 640px;
+  min-height: 78vh;
+  padding: 78px 86px;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(51,36,21,0.12), 0 24px 70px rgba(51,36,21,0.2);
+  transform-style: preserve-3d;
+  transition: transform .45s var(--settle), opacity .45s var(--settle);
+}
+.reading-page.turn-away { transform: rotateY(-9deg) translateX(-46px); opacity: 0; }
+.reading-page.turn-toward { transform: rotateY(7deg) translateX(46px); opacity: 0; }
+.rp-chapter-num {
+  text-align: center;
+  font-variant: all-small-caps;
+  letter-spacing: 0.34em;
+  font-size: 13.5px;
+  color: var(--graphite);
+  margin-bottom: 14px;
+}
+.rp-title {
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1.25;
+  margin-bottom: 12px;
+}
+.rp-ornament { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom: 40px; }
+.rp-ornament::before, .rp-ornament::after { content:''; width: 64px; height:1px; background: var(--rule); }
+.rp-ornament span { width:5px; height:5px; background: var(--clay); transform: rotate(45deg); }
+.rp-text {
+  font-family: 'EB Garamond', serif;
+  font-size: 17.5px;
+  line-height: 1.95;
+  text-align: justify;
+  hyphens: auto;
+  color: var(--ink);
+}
+.rp-text p { margin-bottom: 14px; text-indent: 1.6em; }
+.rp-text p:first-of-type { text-indent: 0; }
+.rp-text p:first-of-type::first-letter {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 64px;
+  line-height: 0.78;
+  float: left;
+  margin: 7px 10px 0 0;
+  color: var(--clay);
+}
+.rp-empty { text-align:center; font-style: italic; color: var(--graphite); padding-top: 60px; }
+.reading-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  color: var(--graphite);
+  padding: 20px 22px;
+  transition: color .3s, transform .3s var(--glide);
+  z-index: 61;
+}
+.reading-nav:hover { color: var(--ink); }
+.reading-nav:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 3px; }
+.reading-nav.prev { left: 12px; }
+.reading-nav.next { right: 12px; }
+.reading-close {
+  position: fixed; top: 20px; right: 30px; z-index: 61;
+}
+.reading-folio {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-size: 12.5px; font-style: italic; color: var(--graphite); z-index: 61;
+}
+
+/* ================================================================
+   THE BINDERY — beginning a new notebook (onboarding)
+   ================================================================ */
+#bindery { background: var(--paper); }
+.bindery-inner {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 100px 40px 120px;
+  text-align: center;
+}
+.bindery-step { display: none; animation: breatheIn .9s var(--glide); }
+.bindery-step.now { display: block; }
+.bindery-q {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+.bindery-sub { font-style: italic; color: var(--ink-soft); font-size: 16px; margin-bottom: 48px; }
+
+.kind-shelf {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px 12px;
+  margin-bottom: 40px;
+}
+.kind-book {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 6px;
+  transition: transform .4s var(--glide);
+}
+.kind-book:hover { transform: translateY(-6px); }
+.kind-book:focus-visible { outline: 2px solid var(--ochre); outline-offset: 4px; border-radius: 3px; }
+.kind-book .kb-spine {
+  width: 34px; height: 104px;
+  border-radius: 2px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: inset 2px 0 3px rgba(255,255,255,0.14), inset -3px 0 4px rgba(0,0,0,0.26), 0 4px 10px rgba(51,36,21,0.2);
+}
+.kind-book .kb-spine i {
+  writing-mode: vertical-rl;
+  font-style: normal;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  color: rgba(250,245,235,0.9);
+}
+.kind-book .kb-name { font-size: 13.5px; font-style: italic; color: var(--ink-soft); }
+.kind-book.chosen .kb-spine { outline: 2px solid var(--ochre); outline-offset: 3px; }
+
+.bindery-input {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 40px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  outline: none;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  padding: 8px 4px 12px;
+  color: var(--ink);
+  transition: border-color .4s;
+}
+.bindery-input:focus { border-bottom-color: var(--ochre); }
+.bindery-input::placeholder { color: var(--rule); font-style: italic; }
+
+.pigment-row { display: flex; justify-content: center; gap: 18px; margin-bottom: 48px; }
+.pigment-dot {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -3px 5px rgba(0,0,0,0.25), 0 3px 8px rgba(51,36,21,0.2);
+  transition: transform .35s var(--glide);
+  position: relative;
+}
+.pigment-dot:hover { transform: scale(1.12); }
+.pigment-dot:focus-visible { outline: 2px solid var(--ink-soft); outline-offset: 4px; }
+.pigment-dot.chosen::after {
+  content:''; position:absolute; inset: -7px;
+  border: 1.5px solid var(--ink-soft);
+  border-radius: 50%;
+}
+.pigment-name { display:block; font-size: 12px; font-style: italic; color: var(--graphite); margin-top: 8px; text-align:center; }
+
+.bindery-continue {
+  font-family: 'EB Garamond', serif;
+  font-variant: all-small-caps;
+  letter-spacing: 0.24em;
+  font-size: 16px;
+  color: var(--ink);
+  border: 1px solid var(--ink-soft);
+  border-radius: 2px;
+  padding: 10px 34px 12px;
+  transition: background .4s, color .4s;
+}
+.bindery-continue:hover { background: var(--ink); color: var(--bone); }
+.bindery-continue:focus-visible { outline: 2px solid var(--ochre); outline-offset: 4px; }
+.bindery-back { display: block; margin: 26px auto 0; }
+
+/* ================================================================
+   CLOSING RITUAL — the memory anchor
+   ================================================================ */
+.veil {
+  position: fixed; inset: 0;
+  z-index: 80;
+  background: rgba(42,34,25,0.32);
+  backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; visibility: hidden;
+  transition: opacity .6s var(--glide), visibility .6s;
+}
+.veil.here { opacity: 1; visibility: visible; }
+.ritual-card {
+  background: var(--bone);
+  border-radius: 3px;
+  padding: 50px 58px 44px;
+  max-width: 460px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(20,14,8,0.45);
+  transform: translateY(14px);
+  transition: transform .6s var(--glide);
+}
+.veil.here .ritual-card { transform: translateY(0); }
+.ritual-q {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.ritual-sub { font-style: italic; font-size: 14.5px; color: var(--graphite); margin-bottom: 34px; }
+.ritual-pigments { display:flex; justify-content:center; gap: 16px; margin-bottom: 36px; }
+.ritual-pigments .pigment-dot { width: 34px; height: 34px; }
+.ritual-skip { display: block; margin: 0 auto; }
+
+/* Inline confirm (removing a chapter) */
+.inline-confirm { font-size: 12.5px; font-style: italic; color: var(--clay); }
+.inline-confirm button { font-size: 12.5px; font-style: italic; color: var(--clay); text-decoration: underline; margin-left: 6px; }
+
+/* ================================================================
+   RESPONSIVE — the room adapts
+   ================================================================ */
+@media (max-width: 900px) {
+  .contents-col { display: none; }
+  .contents-col.opened {
+    display: block;
+    position: fixed;
     left: 0; top: 0; bottom: 0;
-    width: 10px;
-    background: rgba(0,0,0,0.3);
-    z-index: 2;
+    background: var(--paper);
+    z-index: 45;
+    padding: 70px 24px 30px;
+    width: 250px;
+    box-shadow: 20px 0 50px rgba(51,36,21,0.18);
   }
-  .book-1 { background: linear-gradient(160deg, #8b1a1a 0%, #2d0a0a 100%); }
-  .book-1 .bp { position:absolute;inset:0; background-image: repeating-linear-gradient(45deg, rgba(200,146,42,0.12) 0px, rgba(200,146,42,0.12) 1px, transparent 1px, transparent 12px); }
-  .book-2 { background: linear-gradient(160deg, #0d2d4a 0%, #051824 100%); }
-  .book-2 .bp { position:absolute;inset:0; background-image: radial-gradient(circle at 30% 40%, rgba(100,180,255,0.1) 0%, transparent 50%); }
-  .book-3 { background: linear-gradient(160deg, #2d4a1e 0%, #0d1a08 100%); }
-  .book-3 .bp { position:absolute;inset:0; background-image: repeating-linear-gradient(0deg, rgba(200,146,42,0.08) 0px, rgba(200,146,42,0.08) 1px, transparent 1px, transparent 8px); }
-  .book-4 { background: linear-gradient(160deg, #4a3010 0%, #1a0f05 100%); }
-  .book-4 .bp { position:absolute;inset:0; background-image: repeating-linear-gradient(135deg, rgba(232,184,109,0.1) 0px, rgba(232,184,109,0.1) 1px, transparent 1px, transparent 10px); }
-  .book-5 { background: linear-gradient(160deg, #3a1a4a 0%, #12081a 100%); }
-  .book-5 .bp { position:absolute;inset:0; background-image: radial-gradient(circle at 60% 30%, rgba(180,100,255,0.12) 0%, transparent 50%); }
-  .book-new { background: var(--deep); border: 1.5px dashed var(--ghost); display:flex; align-items:center; justify-content:center; }
-  .book-new-icon { font-size: 28px; color: var(--ghost); }
-  .book-title-overlay {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    padding: 24px 10px 10px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.8));
-    z-index: 3;
-  }
-  .book-title-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--cream);
-    line-height: 1.3;
-  }
-  .book-status { display:flex; align-items:center; gap:5px; font-size:10px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; }
-  .book-status .dot { width:5px; height:5px; border-radius:50%; }
-  .status-writing .dot { background: var(--kente-gold); }
-  .status-writing { color: var(--kente-gold); }
-  .status-draft .dot { background: var(--smoke); }
-  .status-draft { color: var(--smoke); }
-  .status-complete .dot { background: #6baa6d; }
-  .status-complete { color: #6baa6d; }
-  .book-word-count { font-size: 10px; color: var(--ghost); margin-top: 2px; }
-  .shelf-wood { height:8px; background:linear-gradient(180deg,#3d2a14 0%,#2c1e0c 100%); border-top:2px solid #5a3d1e; margin-top:4px; margin-bottom:8px; border-radius:0 0 2px 2px; }
-  .editor-view { flex:1; display:flex; overflow:hidden; }
-  .editor-sidebar {
-    width: 200px;
-    background: var(--deep);
-    border-right: 1px solid var(--ghost);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    overflow-y: auto;
-  }
-  .editor-sidebar::-webkit-scrollbar { display: none; }
-  .sidebar-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--ghost); }
-  .sidebar-book-title { font-family:'Playfair Display',serif; font-size:14px; font-weight:700; color:var(--cream); line-height:1.3; margin-bottom:4px; }
-  .sidebar-meta { font-size:10px; color:var(--smoke); letter-spacing:0.06em; text-transform:uppercase; }
-  .chapter-list { padding: 12px 0; flex: 1; }
-  .chapter-section-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--ghost); padding:8px 16px 4px; }
-  .chapter-item { display:flex; align-items:center; gap:8px; padding:8px 16px; cursor:pointer; transition:background 0.15s; border-left:2px solid transparent; }
-  .chapter-item:hover { background: var(--bark); }
-  .chapter-item.active { background:var(--bark); border-left-color:var(--kente-gold); }
-  .chapter-num { font-size:9px; color:var(--ghost); letter-spacing:0.06em; min-width:18px; }
-  .chapter-name { font-size:12px; color:var(--cream); line-height:1.3; flex:1; }
-  .chapter-item.active .chapter-name { color: var(--dusty-amber); }
-  .chapter-words { font-size:9px; color:var(--ghost); }
-  .add-chapter-btn { display:flex; align-items:center; gap:8px; padding:8px 16px; cursor:pointer; color:var(--ghost); transition:all 0.15s; font-size:12px; }
-  .add-chapter-btn:hover { background:var(--bark); color:var(--cream); }
-  .sidebar-footer { padding:12px 16px; border-top:1px solid var(--ghost); }
-  .progress-label { display:flex; justify-content:space-between; font-size:10px; color:var(--smoke); margin-bottom:6px; }
-  .progress-bar { height:3px; background:var(--ghost); border-radius:2px; overflow:hidden; }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--kente-gold),var(--dusty-amber)); width:22%; border-radius:2px; }
-  .writing-pane { flex:1; display:flex; flex-direction:column; background:#131008; overflow:hidden; }
-  .writing-toolbar { display:flex; align-items:center; gap:6px; padding:10px 20px; border-bottom:1px solid var(--ghost); background:var(--deep); flex-shrink:0; }
-  .toolbar-btn { background:transparent; border:none; color:var(--smoke); font-size:12px; font-family:'Space Grotesk',sans-serif; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:500; transition:all 0.15s; }
-  .toolbar-btn:hover { background:var(--ghost); color:var(--cream); }
-  .toolbar-btn.tbactive { color:var(--kente-gold); }
-  .toolbar-sep { width:1px; height:16px; background:var(--ghost); margin:0 4px; }
-  .writing-area { flex:1; padding:48px 56px; overflow-y:auto; position:relative; }
-  .writing-area::-webkit-scrollbar { width:4px; }
-  .writing-area::-webkit-scrollbar-thumb { background:var(--ghost); border-radius:2px; }
-  .chapter-heading-edit { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--cream); margin-bottom:8px; border:none; background:transparent; width:100%; outline:none; letter-spacing:-0.01em; }
-  .chapter-heading-edit::placeholder { color:var(--ghost); }
-  .chapter-sub { font-size:11px; color:var(--smoke); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:36px; display:flex; align-items:center; gap:12px; }
-  .chapter-sub::after { content:''; flex:1; height:1px; background:var(--ghost); }
-  .writing-content { font-family:'Crimson Pro',serif; font-size:18px; line-height:1.85; color:var(--parchment); border:none; background:transparent; width:100%; min-height:300px; resize:none; outline:none; letter-spacing:0.01em; }
-  .writing-content::placeholder { color:var(--ghost); font-style:italic; }
-  .word-counter { position:absolute; bottom:20px; right:28px; font-size:11px; color:var(--ghost); letter-spacing:0.06em; }
-  .preview-pane { width:280px; background:var(--parchment); border-left:1px solid #c8b89a; display:flex; flex-direction:column; overflow:hidden; flex-shrink:0; }
-  .preview-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid #c8b89a; background:#e8ddc8; }
-  .preview-label { font-size:9px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:#8c7560; }
-  .preview-page-num { font-size:10px; color:#a08060; font-family:'Crimson Pro',serif; font-style:italic; }
-  .preview-book { flex:1; overflow-y:auto; padding:32px 24px; background:var(--parchment); position:relative; }
-  .preview-book::-webkit-scrollbar { display:none; }
-  .preview-chapter-num { font-family:'Playfair Display',serif; font-size:9px; font-weight:400; letter-spacing:0.2em; text-transform:uppercase; color:#a08060; text-align:center; margin-bottom:16px; }
-  .preview-chapter-title { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:#2c1a0a; text-align:center; line-height:1.3; margin-bottom:8px; }
-  .preview-divider { display:flex; align-items:center; gap:8px; margin:16px 0 20px; }
-  .preview-divider::before,.preview-divider::after { content:''; flex:1; height:0.5px; background:#b89878; }
-  .preview-divider-diamond { width:6px; height:6px; background:var(--kente-gold); transform:rotate(45deg); flex-shrink:0; }
-  .preview-text { font-family:'Crimson Pro',serif; font-size:12.5px; line-height:1.9; color:#2c1a0a; text-align:justify; }
-  .preview-text p { margin-bottom:10px; }
-  .preview-text p:first-child::first-letter { font-family:'Playfair Display',serif; font-size:40px; font-weight:900; float:left; line-height:0.8; margin:4px 6px 0 0; color:var(--terracotta); }
-  .preview-cursor { display:inline-block; width:1.5px; height:12px; background:var(--terracotta); animation:blink 1.1s step-end infinite; vertical-align:text-bottom; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-  .preview-footer { display:flex; align-items:center; justify-content:center; padding:10px; border-top:0.5px solid #c8b89a; background:#e8ddc8; gap:6px; }
-  .preview-page-dot { width:4px; height:4px; border-radius:50%; background:#b89878; }
-  .preview-page-dot.pdactive { background:var(--terracotta); }
-  .hidden { display: none !important; }
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .modal { background: var(--deep); border: 1px solid var(--ghost); border-radius: 6px; padding: 24px; max-width: 400px; width: 90%; }
-  .modal-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); margin-bottom: 16px; }
-  .modal-input { width: 100%; padding: 10px 12px; background: var(--bark); border: 1px solid var(--ghost); color: var(--cream); font-family: 'Space Grotesk', sans-serif; font-size: 14px; border-radius: 4px; margin-bottom: 16px; }
-  .modal-input::placeholder { color: var(--ghost); }
-  .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; }
-  .modal-btn { padding: 8px 16px; border: none; border-radius: 4px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .modal-btn-cancel { background: var(--bark); color: var(--cream); }
-  .modal-btn-cancel:hover { background: var(--ghost); }
-  .modal-btn-confirm { background: var(--kente-gold); color: var(--ink); }
-  .modal-btn-confirm:hover { background: var(--dusty-amber); }
+  .contents-toggle { display: inline; }
+  .sheet { padding: 54px 34px 80px; }
+  .sheet-margin-note { left: 34px; right: 34px; }
+  .reading-page { padding: 54px 34px; }
+  .library-inner { padding: 40px 22px 0; }
+  .desk-layout { padding: 40px 16px 110px; }
+}
+
+/* ================================================================
+   ACCESSIBILITY — the room welcomes everyone
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .threshold-date, .threshold-line, .threshold-hint { opacity: 1; animation: none; }
+}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="logo">folio<span>OS</span></div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="tabShelf" onclick="showView('shelf')">My Shelf</button>
-    <button class="nav-tab" id="tabEditor" onclick="showView('editor')">Editor</button>
-  </div>
-  <div>
-    <button class="new-btn" onclick="openNewWorkModal()">+ New Work</button>
+
+<div class="lamplight" aria-hidden="true"></div>
+
+<!-- ═══════════ THE THRESHOLD ═══════════ -->
+<div class="room here" id="threshold" role="button" tabindex="0" aria-label="Enter the writing room">
+  <div class="threshold-date" id="thresholdDate">Tuesday · 4 August</div>
+  <div class="threshold-line">The lamp is on.</div>
+  <div class="threshold-hint">touch anywhere to enter</div>
+</div>
+
+<!-- ═══════════ THE LIBRARY ═══════════ -->
+<div class="room" id="library">
+  <div class="library-inner">
+    <div class="library-masthead">
+      <div class="wordmark">Folio<em>·</em>OS</div>
+      <button class="pencil-action" onclick="enterBindery()">bind a new notebook</button>
+    </div>
+    <div class="library-greeting" id="libraryGreeting">Good evening. The shelves are where you left them.</div>
+    <div id="deskMemoryMount"></div>
+    <div id="shelvesMount"></div>
   </div>
 </div>
-<div class="main">
-  <div class="shelf-view" id="shelfView">
-    <div id="activeWorksSection"></div>
-    <div id="completedWorksSection"></div>
+
+<!-- ═══════════ BOOK OPENING TRANSIT ═══════════ -->
+<div id="bookTransit" aria-hidden="true"></div>
+
+<!-- ═══════════ THE DESK ═══════════ -->
+<div class="room" id="desk">
+  <div class="desk-actions">
+    <div style="display:flex; gap:26px;">
+      <button class="pencil-action" onclick="closeNotebook()">← return the book</button>
+      <button class="pencil-action contents-toggle" onclick="toggleContents()">contents</button>
+    </div>
+    <div class="right-group">
+      <button class="pencil-action" onclick="enterReading()">read</button>
+      <button class="pencil-action" id="ribbonAction" onclick="toggleFinished()">tie the ribbon</button>
+    </div>
   </div>
-  <div class="editor-view hidden" id="editorView">
-    <div class="editor-sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-book-title" id="sidebarTitle">Select a work</div>
-        <div class="sidebar-meta" id="sidebarMeta"></div>
+  <div class="desk-layout">
+    <nav class="contents-col" id="contentsCol" aria-label="Contents">
+      <span class="smallcaps contents-label">Contents</span>
+      <div id="contentsList"></div>
+      <button class="pencil-action contents-new" onclick="beginNewChapter()">+ a new chapter</button>
+      <div class="contents-divider"></div>
+      <div class="contents-meta" id="contentsMeta"></div>
+      <div class="thread" aria-hidden="true"><div class="thread-stitch" id="threadStitch" style="width:0%"></div></div>
+    </nav>
+    <div class="sheet">
+      <div class="sheet-work-title" id="sheetWorkTitle"></div>
+      <input class="sheet-chapter-title" id="chapterTitleInput" placeholder="A chapter without a name" aria-label="Chapter title" oninput="onWrite()">
+      <div class="sheet-ornament" aria-hidden="true"><span></span></div>
+      <textarea class="sheet-body" id="sheetBody" placeholder="The page is patient…" aria-label="Manuscript" oninput="onWrite()"></textarea>
+      <div class="sheet-margin-note">
+        <span id="pageCountNote"></span>
+        <span id="keptNote">kept</span>
       </div>
-      <div class="chapter-list" id="chapterList"></div>
-      <div class="sidebar-footer">
-        <div class="progress-label"><span>Progress</span><span id="progressText">0 / 0</span></div>
-        <div class="progress-bar"><div class="progress-fill"></div></div>
-      </div>
-    </div>
-    <div class="writing-pane">
-      <div class="writing-toolbar">
-        <button class="toolbar-btn tbactive">B</button>
-        <button class="toolbar-btn" style="font-style:italic">I</button>
-        <button class="toolbar-btn" style="text-decoration:underline">U</button>
-        <div class="toolbar-sep"></div>
-        <button class="toolbar-btn">H1</button>
-        <button class="toolbar-btn">H2</button>
-        <button class="toolbar-btn">¶</button>
-        <div class="toolbar-sep"></div>
-        <button class="toolbar-btn" style="margin-left:auto;color:var(--kente-gold)">AI Feedback</button>
-      </div>
-      <div class="writing-area">
-        <input class="chapter-heading-edit" id="chapterTitle" placeholder="Chapter title" oninput="syncPreviewAndSave()">
-        <div class="chapter-sub"><span id="chapterSubText">Chapter 01</span></div>
-        <textarea class="writing-content" id="writingArea" placeholder="Start writing..." oninput="syncPreviewAndSave()"></textarea>
-        <div class="word-counter" id="wordCounter">0 words</div>
-      </div>
-    </div>
-    <div class="preview-pane">
-      <div class="preview-header">
-        <div class="preview-label">Live Preview</div>
-        <div class="preview-page-num" id="pageNum">Page 1</div>
-      </div>
-      <div class="preview-book">
-        <div class="preview-chapter-num" id="previewChapNum">Chapter</div>
-        <div class="preview-chapter-title" id="previewTitle">Title</div>
-        <div class="preview-divider"><div class="preview-divider-diamond"></div></div>
-        <div class="preview-text" id="previewText"><p><span class="preview-cursor"></span></p></div>
-      </div>
-      <div class="preview-footer"><div class="preview-page-dot pdactive"></div></div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay hidden" id="newWorkModal">
-  <div class="modal">
-    <div class="modal-title">New Work</div>
-    <input class="modal-input" id="workTitleInput" placeholder="Title of your work" />
-    <input class="modal-input" id="workGenreInput" placeholder="Genre (e.g., Fiction, Essay)" />
-    <div class="modal-buttons">
-      <button class="modal-btn modal-btn-cancel" onclick="closeNewWorkModal()">Cancel</button>
-      <button class="modal-btn modal-btn-confirm" onclick="createNewWork()">Create</button>
+<!-- ═══════════ READING MODE ═══════════ -->
+<div class="room" id="reading" aria-label="Reading mode">
+  <button class="pencil-action reading-close" onclick="leaveReading()">close the book</button>
+  <button class="reading-nav prev" onclick="turnPage(-1)" aria-label="Previous chapter">‹</button>
+  <button class="reading-nav next" onclick="turnPage(1)" aria-label="Next chapter">›</button>
+  <div class="reading-stage">
+    <div class="reading-page" id="readingPage"></div>
+  </div>
+  <div class="reading-folio" id="readingFolio"></div>
+</div>
+
+<!-- ═══════════ THE BINDERY ═══════════ -->
+<div class="room" id="bindery">
+  <div class="bindery-inner">
+
+    <div class="bindery-step" id="bindStep1">
+      <h1 class="bindery-q">What kind of notebook shall we bind?</h1>
+      <p class="bindery-sub">Every shelf begins with a single decision.</p>
+      <div class="kind-shelf" id="kindShelf"></div>
+      <button class="pencil-action bindery-back" onclick="leaveBindery()">← back to the library</button>
     </div>
+
+    <div class="bindery-step" id="bindStep2">
+      <h1 class="bindery-q">And what shall we call it?</h1>
+      <p class="bindery-sub" id="bindKindEcho"></p>
+      <input class="bindery-input" id="bindTitleInput" placeholder="its name…" aria-label="Title of the new notebook">
+      <button class="bindery-continue" onclick="bindStepTo(3)">choose the cloth</button>
+      <button class="pencil-action bindery-back" onclick="bindStepTo(1)">← a different kind</button>
+    </div>
+
+    <div class="bindery-step" id="bindStep3">
+      <h1 class="bindery-q">Choose its cloth.</h1>
+      <p class="bindery-sub">Earth pigments. It will darken a little with the years.</p>
+      <div class="pigment-row" id="pigmentRow"></div>
+      <button class="bindery-continue" onclick="placeOnShelf()">place it on the shelf</button>
+      <button class="pencil-action bindery-back" onclick="bindStepTo(2)">← rename it</button>
+    </div>
+
   </div>
 </div>
 
-<div class="modal-overlay hidden" id="newChapterModal">
-  <div class="modal">
-    <div class="modal-title">New Chapter</div>
-    <input class="modal-input" id="chapterTitleInput" placeholder="Chapter title" />
-    <div class="modal-buttons">
-      <button class="modal-btn modal-btn-cancel" onclick="closeNewChapterModal()">Cancel</button>
-      <button class="modal-btn modal-btn-confirm" onclick="createNewChapter()">Create</button>
-    </div>
+<!-- ═══════════ CLOSING RITUAL ═══════════ -->
+<div class="veil" id="ritualVeil" role="dialog" aria-label="Before you go">
+  <div class="ritual-card">
+    <div class="ritual-q">Before you go — <br>what colour was today?</div>
+    <div class="ritual-sub">Not a tag. A memory anchor.</div>
+    <div class="ritual-pigments" id="ritualPigments"></div>
+    <button class="pencil-action ritual-skip" onclick="finishRitual(null)">no colour today</button>
   </div>
+</div>
+
+<!-- ═══════════ CORNER OF THE ROOM ═══════════ -->
+<div class="room-corner">
+  <button id="soundToggle" onclick="toggleSound()" aria-pressed="false">the room is silent</button>
 </div>
 
 <script>
-  const STORAGE_KEY = 'folioOS_data';
+/* ================================================================
+   STORAGE — persists in the browser; quietly falls back to memory
+   ================================================================ */
+const KEY = 'folioOS_room_v2';
+let memoryStore = null;
+function loadState() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* the room continues */ }
+  if (memoryStore) return memoryStore;
+  return seedState();
+}
+function saveState(s) {
+  memoryStore = s;
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) { /* memory only */ }
+}
 
-  function getStorage() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) return initializeDefaultData();
-    return JSON.parse(data);
-  }
+function seedState() {
+  const s = {
+    works: [
+      { id: 1, title: 'Ashes of Kano', kind: 'Novel', year: 2026, status: 'writing', pigment: 'clay', opens: 9, anchors: [],
+        chapters: [
+          { id: 1, title: 'The Road North', content: 'The harmattan came early that year, coating everything in Kano with a fine red dust that tasted of the Sahara. Amara pressed her face against the bus window and watched the minarets recede behind a gauze of heat and particulate, already uncertain whether she was leaving or being expelled.\n\nShe had not told anyone she was going. Not her mother, who would have wept. Not Dele, who would have laughed. Certainly not the man in the grey kaftan who had handed her the envelope three weeks ago on Ahmadu Bello Way, as though passing salt across a table.' },
+          { id: 2, title: 'Dust and Memory', content: '' },
+          { id: 3, title: 'The Market', content: '' }
+        ] },
+      { id: 2, title: 'Lagos Blue', kind: 'Novel', year: 2025, status: 'writing', pigment: 'indigo', opens: 4, anchors: [],
+        chapters: [ { id: 1, title: 'Awakening', content: '' } ] },
+      { id: 3, title: 'Iroko', kind: 'Essays', year: 2026, status: 'draft', pigment: 'moss', opens: 2, anchors: [],
+        chapters: [ { id: 1, title: 'The Tree and Its Meaning', content: '' } ] },
+      { id: 4, title: 'The Compound', kind: 'Novel', year: 2023, status: 'complete', pigment: 'umber', opens: 14, anchors: [],
+        chapters: [ { id: 1, title: 'Prologue', content: '' } ] },
+      { id: 5, title: 'Nameless', kind: 'Poetry', year: 2022, status: 'complete', pigment: 'mulberry', opens: 6, anchors: [],
+        chapters: [ { id: 1, title: 'Collection', content: '' } ] }
+    ],
+    currentWorkId: null,
+    currentChapterId: null,
+    lastSession: { workId: 1, chapterId: 1, when: 'yesterday evening' },
+    sound: false
+  };
+  saveState(s);
+  return s;
+}
 
-  function saveStorage(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }
+let S = loadState();
 
-  function initializeDefaultData() {
-    const defaultData = {
-      works: [
-        { id: 1, title: 'Ashes of Kano', genre: 'Fiction', status: 'writing', bookClass: 'book-1', chapters: [{ id: 1, title: 'Chapter One: The Road North', content: 'The harmattan came early that year, coating everything in Kano with a fine red dust that tasted of the Sahara. Amara pressed her face against the bus window and watched the minarets recede behind a gauze of heat and particulate, already uncertain whether she was leaving or being expelled.\n\nShe had not told anyone she was going. Not her mother, who would have wept. Not Dele, who would have laughed. Certainly not the man in the grey kaftan who had handed her the envelope three weeks ago on Ahmadu Bello Way, as though passing salt across a table.' }, { id: 2, title: 'Chapter Two: Dust and Memory', content: '' }, { id: 3, title: 'Chapter Three: The Market', content: '' }] },
-        { id: 2, title: 'Lagos Blue', genre: 'Fiction', status: 'writing', bookClass: 'book-2', chapters: [{ id: 1, title: 'Chapter One: Awakening', content: '' }] },
-        { id: 3, title: 'Iroko', genre: 'Essay', status: 'draft', bookClass: 'book-3', chapters: [{ id: 1, title: 'The Tree and Its Meaning', content: '' }] },
-        { id: 4, title: 'The Compound', genre: 'Novel', status: 'complete', bookClass: 'book-4', chapters: [{ id: 1, title: 'Prologue', content: '' }] },
-        { id: 5, title: 'Nameless', genre: 'Poetry', status: 'complete', bookClass: 'book-5', chapters: [{ id: 1, title: 'Collection', content: '' }] }
-      ],
-      currentWorkId: 1,
-      currentChapterId: 1
-    };
-    saveStorage(defaultData);
-    return defaultData;
-  }
+/* ================================================================
+   SOUND — the quiet acoustics of paper (off by default)
+   ================================================================ */
+let audioCtx = null;
+function paperSound(kind) {
+  if (!S.sound) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const dur = kind === 'turn' ? 0.14 : 0.2;
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) {
+      const t = i / d.length;
+      d[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 2.2) * 0.5;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = kind === 'turn' ? 2600 : 1600;
+    const gain = audioCtx.createGain();
+    gain.gain.value = 0.16;
+    src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+    src.start();
+  } catch (e) { /* silence is also fine */ }
+}
+function toggleSound() {
+  S.sound = !S.sound;
+  saveState(S);
+  const b = document.getElementById('soundToggle');
+  b.textContent = S.sound ? 'the room has sound' : 'the room is silent';
+  b.setAttribute('aria-pressed', S.sound);
+  if (S.sound) paperSound('turn');
+}
 
-  function showView(view) {
-    const shelf = document.getElementById('shelfView');
-    const editor = document.getElementById('editorView');
-    const t1 = document.getElementById('tabShelf');
-    const t2 = document.getElementById('tabEditor');
-    if (view === 'shelf') {
-      shelf.classList.remove('hidden');
-      editor.classList.add('hidden');
-      t1.classList.add('active');
-      t2.classList.remove('active');
-      renderShelf();
-    } else {
-      shelf.classList.add('hidden');
-      editor.classList.remove('hidden');
-      t1.classList.remove('active');
-      t2.classList.add('active');
-      loadEditor();
+/* ================================================================
+   PIGMENTS & KINDS
+   ================================================================ */
+const PIGMENTS = [
+  { id:'clay', name:'Clay', hex:'#9E5236' },
+  { id:'ochre', name:'Ochre', hex:'#B08744' },
+  { id:'moss', name:'Moss', hex:'#67714F' },
+  { id:'indigo', name:'Indigo', hex:'#39424F' },
+  { id:'mulberry', name:'Mulberry', hex:'#6D4650' },
+  { id:'umber', name:'Umber', hex:'#55402C' }
+];
+const KINDS = [
+  { id:'Journal', pigment:'umber' },
+  { id:'Novel', pigment:'clay' },
+  { id:'Poetry', pigment:'mulberry' },
+  { id:'Essays', pigment:'moss' },
+  { id:'Letters', pigment:'ochre' },
+  { id:'Dreams', pigment:'indigo' },
+  { id:'Lyrics', pigment:'clay' }
+];
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+const $ = id => document.getElementById(id);
+function wordsOf(ch) { return ch.content && ch.content.trim() ? ch.content.trim().split(/\s+/).length : 0; }
+function workWords(w) { return w.chapters.reduce((n, c) => n + wordsOf(c), 0); }
+function roman(n) {
+  const map = [[1000,'m'],[900,'cm'],[500,'d'],[400,'cd'],[100,'c'],[90,'xc'],[50,'l'],[40,'xl'],[10,'x'],[9,'ix'],[5,'v'],[4,'iv'],[1,'i']];
+  let out = '';
+  for (const [v, r] of map) { while (n >= v) { out += r; n -= v; } }
+  return out;
+}
+function esc(t) { const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+function currentWork() { return S.works.find(w => w.id === S.currentWorkId); }
+function currentChapter() {
+  const w = currentWork();
+  if (!w) return null;
+  return w.chapters.find(c => c.id === S.currentChapterId) || w.chapters[0];
+}
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 5) return 'The small hours. The shelves are keeping watch.';
+  if (h < 12) return 'Good morning. The shelves are where you left them.';
+  if (h < 18) return 'Good afternoon. The shelves are where you left them.';
+  return 'Good evening. The lamp has been waiting.';
+}
+
+/* ================================================================
+   ROOMS — moving between them
+   ================================================================ */
+function goRoom(id) {
+  document.querySelectorAll('.room').forEach(r => r.classList.remove('here'));
+  const room = $(id);
+  room.classList.add('here');
+  room.scrollTop = 0;
+}
+
+/* ================================================================
+   THE THRESHOLD
+   ================================================================ */
+(function initThreshold() {
+  const now = new Date();
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('thresholdDate').textContent = days[now.getDay()] + ' · ' + now.getDate() + ' ' + months[now.getMonth()];
+  const enter = () => {
+    const t = $('threshold');
+    if (t.classList.contains('leaving')) return;
+    t.classList.add('leaving');
+    paperSound('open');
+    setTimeout(() => { t.classList.remove('here'); goRoom('library'); }, 700);
+  };
+  $('threshold').addEventListener('click', enter);
+  $('threshold').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') enter(); });
+  setTimeout(enter, 4200); /* the door opens on its own, gently */
+})();
+
+/* ================================================================
+   THE LIBRARY
+   ================================================================ */
+function spineWidth(w) {
+  const words = workWords(w);
+  return Math.min(64, 36 + Math.floor(words / 260)); /* manuscripts thicken */
+}
+function spineHeight(w) {
+  const base = { Novel: 178, Journal: 158, Poetry: 150, Essays: 164, Letters: 152, Dreams: 156, Lyrics: 148 };
+  return base[w.kind] || 160;
+}
+
+function renderLibrary() {
+  $('libraryGreeting').textContent = greeting();
+
+  /* the desk remembers */
+  const mount = $('deskMemoryMount');
+  mount.innerHTML = '';
+  if (S.lastSession) {
+    const w = S.works.find(x => x.id === S.lastSession.workId);
+    if (w) {
+      const ch = w.chapters.find(c => c.id === S.lastSession.chapterId) || w.chapters[0];
+      const pig = PIGMENTS.find(p => p.id === w.pigment) || PIGMENTS[0];
+      const lastAnchor = w.anchors.length ? w.anchors[w.anchors.length - 1] : null;
+      const anchorLine = lastAnchor && lastAnchor.color
+        ? ' · it felt like ' + lastAnchor.color.toLowerCase()
+        : '';
+      const card = document.createElement('button');
+      card.className = 'desk-memory';
+      card.setAttribute('aria-label', 'Continue writing ' + w.title);
+      card.innerHTML =
+        '<div class="dm-ribbon" style="background:' + pig.hex + '"></div>' +
+        '<div><div class="dm-label">The desk remembers</div>' +
+        '<div class="dm-title">' + esc(w.title) + '</div>' +
+        '<div class="dm-sub">you were in “' + esc(ch.title) + '” ' + (S.lastSession.when || 'recently') + anchorLine + '</div></div>';
+      card.onclick = () => openBookFrom(card.querySelector('.dm-ribbon'), w.id, ch.id);
+      mount.appendChild(card);
     }
   }
 
-  function renderShelf() {
-    const data = getStorage();
-    const activeWorks = data.works.filter(w => w.status === 'writing' || w.status === 'draft');
-    const completedWorks = data.works.filter(w => w.status === 'complete');
+  /* shelves */
+  const shelves = $('shelvesMount');
+  shelves.innerHTML = '';
+  const inProgress = S.works.filter(w => w.status !== 'complete');
+  const finished = S.works.filter(w => w.status === 'complete');
 
-    let activeHtml = '<div><div class="shelf-header"><div class="shelf-title">Active Works</div><div class="shelf-count">' + activeWorks.length + ' in progress</div></div><div class="book-grid">';
-    activeWorks.forEach(work => {
-      const wordCount = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
-      activeHtml += '<div class="book-item" onclick="selectWork(' + work.id + ')"><div class="book-cover ' + work.bookClass + '"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">' + work.title + '</div></div></div><div class="book-status status-' + work.status + '"><div class="dot"></div> ' + (work.status.charAt(0).toUpperCase() + work.status.slice(1)) + '</div><div class="book-word-count">' + wordCount.toLocaleString() + ' words</div></div>';
-    });
-    activeHtml += '<div class="book-item" onclick="openNewWorkModal()"><div class="book-cover book-new"><div class="book-new-icon">+</div></div><div class="book-status status-draft"><div class="dot" style="opacity:0"></div></div><div class="book-word-count" style="color:var(--ghost)">Start writing</div></div></div><div class="shelf-wood"></div></div>';
-
-    let completedHtml = '<div><div class="shelf-header"><div class="shelf-title">Completed</div><div class="shelf-count">' + completedWorks.length + ' works</div></div><div class="book-grid">';
-    completedWorks.forEach(work => {
-      const wordCount = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
-      completedHtml += '<div class="book-item" onclick="selectWork(' + work.id + ')"><div class="book-cover ' + work.bookClass + '"><div class="bp"></div><div class="book-title-overlay"><div class="book-title-text">' + work.title + '</div></div></div><div class="book-status status-complete"><div class="dot"></div> Complete</div><div class="book-word-count">' + wordCount.toLocaleString() + ' words</div></div>';
-    });
-    completedHtml += '</div><div class="shelf-wood"></div></div>';
-
-    document.getElementById('activeWorksSection').innerHTML = activeHtml;
-    document.getElementById('completedWorksSection').innerHTML = completedWorks.length > 0 ? completedHtml : '';
+  if (S.works.length === 0) {
+    shelves.innerHTML =
+      '<div class="empty-library"><h2>Every library begins with one notebook.</h2>' +
+      '<p>The shelves are empty, but they are patient.</p></div>' +
+      '<div class="shelf"><div class="shelf-books" id="emptyShelfBooks"></div><div class="shelf-wood"></div></div>';
+    const eb = $('emptyShelfBooks');
+    eb.appendChild(makeNewSpine());
+    return;
   }
 
-  function selectWork(workId) {
-    const data = getStorage();
-    data.currentWorkId = workId;
-    data.currentChapterId = data.works.find(w => w.id === workId).chapters[0].id;
-    saveStorage(data);
-    showView('editor');
-  }
+  shelves.appendChild(makeShelf('In Progress', inProgress, true));
+  if (finished.length) shelves.appendChild(makeShelf('Finished Works', finished, false));
+}
 
-  function loadEditor() {
-    const data = getStorage();
-    const work = data.works.find(w => w.id === data.currentWorkId);
-    if (!work) return;
-    const chapter = work.chapters.find(ch => ch.id === data.currentChapterId) || work.chapters[0];
-    document.getElementById('sidebarTitle').textContent = work.title;
-    document.getElementById('sidebarMeta').textContent = work.genre + ' · ' + work.status;
-    renderChapterList(work, chapter);
-    loadChapter(chapter);
-  }
+function makeShelf(label, works, withNew) {
+  const shelf = document.createElement('div');
+  shelf.className = 'shelf';
+  const plate = document.createElement('span');
+  plate.className = 'shelf-plate';
+  plate.textContent = label;
+  const row = document.createElement('div');
+  row.className = 'shelf-books';
+  works.forEach(w => row.appendChild(makeSpine(w)));
+  if (withNew) row.appendChild(makeNewSpine());
+  const wood = document.createElement('div');
+  wood.className = 'shelf-wood';
+  shelf.appendChild(plate);
+  shelf.appendChild(row);
+  shelf.appendChild(wood);
+  return shelf;
+}
 
-  function renderChapterList(work, activeChapter) {
-    let html = '<div class="chapter-section-label">Chapters</div>';
-    work.chapters.forEach((ch, idx) => {
-      const isActive = ch.id === activeChapter.id ? 'active' : '';
-      const wordCount = ch.content ? ch.content.split(/\s+/).length : 0;
-      html += '<div class="chapter-item ' + isActive + '" onclick="switchChapter(' + ch.id + ')"><div class="chapter-num">' + (idx + 1).toString().padStart(2, '0') + '</div><div class="chapter-name">' + ch.title + '</div><div class="chapter-words">' + (wordCount ? wordCount.toLocaleString() : '—') + '</div></div>';
-    });
-    html += '<div class="add-chapter-btn" onclick="openNewChapterModal()">+ Add chapter</div>';
-    document.getElementById('chapterList').innerHTML = html;
-  }
+function makeSpine(w) {
+  const b = document.createElement('button');
+  b.className = 'spine cloth-' + (w.pigment || 'clay') + (w.opens > 10 ? ' aged' : '');
+  b.style.width = spineWidth(w) + 'px';
+  b.style.height = spineHeight(w) + 'px';
+  b.setAttribute('aria-label', w.title + ', ' + w.kind + ', ' + workWords(w).toLocaleString() + ' words. Open.');
+  b.innerHTML =
+    '<span class="spine-title">' + esc(w.title) + '</span>' +
+    '<span class="spine-year">' + (w.year || '') + '</span>' +
+    (w.status === 'complete' ? '<span class="spine-ribbon" aria-hidden="true"></span>' : '');
+  b.onclick = () => openBookFrom(b, w.id, null);
+  return b;
+}
 
-  function loadChapter(chapter) {
-    const data = getStorage();
-    const work = data.works.find(w => w.id === data.currentWorkId);
-    const chapterIndex = work.chapters.findIndex(ch => ch.id === chapter.id) + 1;
-    document.getElementById('chapterTitle').value = chapter.title;
-    document.getElementById('writingArea').value = chapter.content || '';
-    document.getElementById('chapterSubText').textContent = 'Chapter ' + chapterIndex.toString().padStart(2, '0');
-    const totalWords = work.chapters.reduce((sum, ch) => sum + (ch.content ? ch.content.split(/\s+/).length : 0), 0);
-    const targetWords = 50000;
-    document.getElementById('progressText').textContent = totalWords.toLocaleString() + ' / ' + targetWords.toLocaleString();
-    document.querySelector('.progress-fill').style.width = Math.min(100, (totalWords / targetWords) * 100) + '%';
-    syncPreviewAndSave();
-  }
+function makeNewSpine() {
+  const b = document.createElement('button');
+  b.className = 'spine-new';
+  b.setAttribute('aria-label', 'Bind a new notebook');
+  b.innerHTML = '+<span>a new notebook</span>';
+  b.onclick = enterBindery;
+  return b;
+}
 
-  function switchChapter(chapterId) {
-    const data = getStorage();
-    data.currentChapterId = chapterId;
-    saveStorage(data);
-    loadEditor();
-  }
+/* ================================================================
+   OPENING A BOOK — the pull-and-open transition
+   ================================================================ */
+let reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function syncPreviewAndSave() {
-    const data = getStorage();
-    const work = data.works.find(w => w.id === data.currentWorkId);
-    const chapter = work.chapters.find(ch => ch.id === data.currentChapterId);
-    const titleVal = document.getElementById('chapterTitle').value;
-    const bodyVal = document.getElementById('writingArea').value;
-    chapter.title = titleVal;
-    chapter.content = bodyVal;
-    saveStorage(data);
-    const parts = titleVal.split(':');
-    const displayTitle = parts.length > 1 ? parts[1].trim() : titleVal;
-    document.getElementById('previewTitle').textContent = displayTitle;
-    const paragraphs = bodyVal.split(/\n\n+/).filter(p => p.trim());
-    const previewText = document.getElementById('previewText');
-    if (paragraphs.length > 0) {
-      previewText.innerHTML = paragraphs.map((p, i) => '<p>' + p.trim() + (i === paragraphs.length - 1 ? '<span class="preview-cursor"></span>' : '') + '</p>').join('');
-    } else {
-      previewText.innerHTML = '<p><span class="preview-cursor"></span></p>';
-    }
-    const words = bodyVal.trim() ? bodyVal.trim().split(/\s+/).length : 0;
-    document.getElementById('wordCounter').textContent = words + ' words';
-  }
+function openBookFrom(el, workId, chapterId) {
+  const w = S.works.find(x => x.id === workId);
+  if (!w) return;
+  w.opens = (w.opens || 0) + 1;
+  S.currentWorkId = workId;
+  S.currentChapterId = chapterId || w.chapters[0].id;
+  S.lastSession = { workId: workId, chapterId: S.currentChapterId, when: 'a moment ago' };
+  saveState(S);
+  paperSound('open');
 
-  function openNewWorkModal() {
-    document.getElementById('newWorkModal').classList.remove('hidden');
-    document.getElementById('workTitleInput').focus();
-  }
+  if (reducedMotion || !el) { renderDesk(); goRoom('desk'); return; }
 
-  function closeNewWorkModal() {
-    document.getElementById('newWorkModal').classList.add('hidden');
-  }
+  /* the book lifts from the shelf, travels to centre, and its cover opens */
+  const rect = el.getBoundingClientRect();
+  const transit = $('bookTransit');
+  const pig = PIGMENTS.find(p => p.id === w.pigment) || PIGMENTS[0];
+  transit.innerHTML =
+    '<div class="transit-book" id="transitBook">' +
+      '<div class="transit-page"></div>' +
+      '<div class="transit-cover" id="transitCover" style="background:linear-gradient(120deg,' + pig.hex + ', ' + pig.hex + 'dd)">' +
+        '<div class="tc-title">' + esc(w.title) + '</div>' +
+      '</div>' +
+    '</div>';
+  transit.classList.add('playing');
+  const book = $('transitBook');
+  book.style.left = rect.left + 'px';
+  book.style.top = rect.top + 'px';
+  book.style.width = rect.width + 'px';
+  book.style.height = rect.height + 'px';
+  book.style.transition = 'all .7s cubic-bezier(0.22, 1, 0.36, 1)';
 
-  function createNewWork() {
-    const title = document.getElementById('workTitleInput').value.trim();
-    const genre = document.getElementById('workGenreInput').value.trim() || 'Untitled';
-    if (!title) return;
-    const data = getStorage();
-    const newId = Math.max(...data.works.map(w => w.id), 0) + 1;
-    const bookClasses = ['book-1', 'book-2', 'book-3', 'book-4', 'book-5'];
-    const bookClass = bookClasses[(newId - 1) % bookClasses.length];
-    data.works.push({ id: newId, title: title, genre: genre, status: 'draft', bookClass: bookClass, chapters: [{ id: 1, title: 'Chapter One', content: '' }] });
-    data.currentWorkId = newId;
-    data.currentChapterId = 1;
-    saveStorage(data);
-    closeNewWorkModal();
-    document.getElementById('workTitleInput').value = '';
-    document.getElementById('workGenreInput').value = '';
-    renderShelf();
-    showView('editor');
-  }
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const bw = Math.min(340, window.innerWidth * 0.6);
+    const bh = bw * 1.45;
+    book.style.left = (window.innerWidth / 2 - bw / 2) + 'px';
+    book.style.top = (window.innerHeight / 2 - bh / 2) + 'px';
+    book.style.width = bw + 'px';
+    book.style.height = bh + 'px';
+  }));
 
-  function openNewChapterModal() {
-    document.getElementById('newChapterModal').classList.remove('hidden');
-    document.getElementById('chapterTitleInput').focus();
-  }
+  setTimeout(() => { $('transitCover').style.transform = 'rotateY(-165deg)'; paperSound('turn'); }, 650);
+  setTimeout(() => { renderDesk(); goRoom('desk'); }, 1150);
+  setTimeout(() => { transit.classList.remove('playing'); transit.innerHTML = ''; }, 1900);
+}
 
-  function closeNewChapterModal() {
-    document.getElementById('newChapterModal').classList.add('hidden');
-  }
+/* ================================================================
+   THE DESK
+   ================================================================ */
+let saveTimer = null, keptTimer = null;
 
-  function createNewChapter() {
-    const title = document.getElementById('chapterTitleInput').value.trim();
-    if (!title) return;
-    const data = getStorage();
-    const work = data.works.find(w => w.id === data.currentWorkId);
-    const newChapterId = Math.max(...work.chapters.map(ch => ch.id), 0) + 1;
-    work.chapters.push({ id: newChapterId, title: title, content: '' });
-    data.currentChapterId = newChapterId;
-    saveStorage(data);
-    closeNewChapterModal();
-    document.getElementById('chapterTitleInput').value = '';
-    loadEditor();
-  }
+function renderDesk() {
+  const w = currentWork();
+  if (!w) return;
+  const ch = currentChapter();
+  $('sheetWorkTitle').textContent = w.title;
+  $('chapterTitleInput').value = ch.title;
+  $('sheetBody').value = ch.content || '';
+  $('ribbonAction').textContent = w.status === 'complete' ? 'untie the ribbon' : 'tie the ribbon';
+  renderContents();
+  renderMarginNotes();
+}
 
-  function deleteChapter(chapterId) {
-    if (!confirm('Delete this chapter?')) return;
-    const data = getStorage();
-    const work = data.works.find(w => w.id === data.currentWorkId);
-    work.chapters = work.chapters.filter(ch => ch.id !== chapterId);
-    if (work.chapters.length === 0) {
-      work.chapters.push({ id: 1, title: 'Chapter One', content: '' });
-    }
-    data.currentChapterId = work.chapters[0].id;
-    saveStorage(data);
-    loadEditor();
-  }
-
-  getStorage();
-  renderShelf();
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      closeNewWorkModal();
-      closeNewChapterModal();
-    }
+function renderContents() {
+  const w = currentWork();
+  const ch = currentChapter();
+  const list = $('contentsList');
+  list.innerHTML = '';
+  w.chapters.forEach((c, i) => {
+    const item = document.createElement('button');
+    item.className = 'contents-item' + (c.id === ch.id ? ' reading-now' : '');
+    const wc = wordsOf(c);
+    item.innerHTML =
+      '<span class="ci-numeral">' + roman(i + 1) + '.</span>' +
+      '<span class="ci-name">' + esc(c.title || 'Untitled') + '</span>' +
+      '<span class="ci-words">' + (wc ? wc.toLocaleString() : '—') + '</span>';
+    item.onclick = () => { switchChapter(c.id); };
+    /* long-press / right-click to remove */
+    item.oncontextmenu = (e) => { e.preventDefault(); askRemoveChapter(c.id, item); };
+    list.appendChild(item);
   });
+
+  const total = workWords(w);
+  const kindLine = w.kind + ' · begun ' + (w.year || '—');
+  $('contentsMeta').innerHTML =
+    '<b>' + esc(w.title) + '</b><br>' + esc(kindLine) + '<br>' +
+    total.toLocaleString() + ' words · ' + Math.max(1, Math.ceil(total / 275)) + ' pages';
+  const target = 50000;
+  $('threadStitch').style.width = Math.min(100, (total / target) * 100) + '%';
+}
+
+function renderMarginNotes() {
+  const ch = currentChapter();
+  const wc = wordsOf(ch);
+  $('pageCountNote').textContent = wc
+    ? 'about ' + wc.toLocaleString() + ' words · page ' + Math.max(1, Math.ceil(wc / 275))
+    : 'the page is blank';
+}
+
+function onWrite() {
+  const w = currentWork();
+  const ch = currentChapter();
+  if (!w || !ch) return;
+  ch.title = $('chapterTitleInput').value;
+  ch.content = $('sheetBody').value;
+  if (w.status === 'draft' && workWords(w) > 0) w.status = 'writing';
+  renderMarginNotes();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    saveState(S);
+    renderContents();
+    const kept = $('keptNote');
+    const t = new Date();
+    kept.textContent = 'kept · ' + t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0');
+    kept.classList.add('shown');
+    clearTimeout(keptTimer);
+    keptTimer = setTimeout(() => kept.classList.remove('shown'), 2600);
+  }, 800);
+}
+
+function switchChapter(id) {
+  saveState(S);
+  S.currentChapterId = id;
+  S.lastSession = { workId: S.currentWorkId, chapterId: id, when: 'a moment ago' };
+  saveState(S);
+  paperSound('turn');
+  renderDesk();
+}
+
+function beginNewChapter() {
+  const w = currentWork();
+  const nid = Math.max(0, ...w.chapters.map(c => c.id)) + 1;
+  w.chapters.push({ id: nid, title: '', content: '' });
+  S.currentChapterId = nid;
+  saveState(S);
+  paperSound('turn');
+  renderDesk();
+  $('chapterTitleInput').focus();
+}
+
+function askRemoveChapter(id, itemEl) {
+  const existing = itemEl.querySelector('.inline-confirm');
+  if (existing) { existing.remove(); return; }
+  const span = document.createElement('span');
+  span.className = 'inline-confirm';
+  span.innerHTML = 'remove?<button aria-label="Confirm remove chapter">yes</button>';
+  span.querySelector('button').onclick = (e) => { e.stopPropagation(); removeChapter(id); };
+  itemEl.appendChild(span);
+  setTimeout(() => span.remove(), 4000);
+}
+
+function removeChapter(id) {
+  const w = currentWork();
+  w.chapters = w.chapters.filter(c => c.id !== id);
+  if (!w.chapters.length) w.chapters.push({ id: 1, title: '', content: '' });
+  S.currentChapterId = w.chapters[0].id;
+  saveState(S);
+  renderDesk();
+}
+
+function toggleFinished() {
+  const w = currentWork();
+  w.status = w.status === 'complete' ? 'writing' : 'complete';
+  saveState(S);
+  paperSound('open');
+  $('ribbonAction').textContent = w.status === 'complete' ? 'untie the ribbon' : 'tie the ribbon';
+}
+
+function toggleContents() {
+  $('contentsCol').classList.toggle('opened');
+}
+
+/* Closing the notebook — the memory-anchor ritual */
+function closeNotebook() {
+  saveState(S);
+  const ch = currentChapter();
+  const wroteSomething = ch && (ch.content || '').trim().length > 0;
+  if (wroteSomething && !reducedMotion) {
+    showRitual();
+  } else {
+    returnToLibrary();
+  }
+}
+
+function showRitual() {
+  const row = $('ritualPigments');
+  row.innerHTML = '';
+  PIGMENTS.slice(0, 5).forEach(p => {
+    const wrap = document.createElement('div');
+    const dot = document.createElement('button');
+    dot.className = 'pigment-dot';
+    dot.style.background = 'radial-gradient(circle at 35% 30%, ' + p.hex + 'ee, ' + p.hex + ')';
+    dot.setAttribute('aria-label', p.name);
+    dot.onclick = () => finishRitual(p.name);
+    const name = document.createElement('span');
+    name.className = 'pigment-name';
+    name.textContent = p.name;
+    wrap.appendChild(dot); wrap.appendChild(name);
+    row.appendChild(wrap);
+  });
+  $('ritualVeil').classList.add('here');
+}
+
+function finishRitual(colorName) {
+  const w = currentWork();
+  if (w && colorName) {
+    w.anchors.push({ date: new Date().toISOString().slice(0, 10), color: colorName });
+    saveState(S);
+  }
+  $('ritualVeil').classList.remove('here');
+  setTimeout(returnToLibrary, 250);
+}
+
+function returnToLibrary() {
+  paperSound('open');
+  renderLibrary();
+  goRoom('library');
+}
+
+/* ================================================================
+   READING MODE
+   ================================================================ */
+let readingIndex = 0;
+
+function enterReading() {
+  saveState(S);
+  const w = currentWork();
+  readingIndex = Math.max(0, w.chapters.findIndex(c => c.id === S.currentChapterId));
+  renderReadingPage();
+  goRoom('reading');
+}
+function leaveReading() { goRoom('desk'); }
+
+function renderReadingPage() {
+  const w = currentWork();
+  const ch = w.chapters[readingIndex];
+  const page = $('readingPage');
+  const paras = (ch.content || '').split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+  const body = paras.length
+    ? '<div class="rp-text">' + paras.map(p => '<p>' + esc(p) + '</p>').join('') + '</div>'
+    : '<div class="rp-empty">This chapter has not been written yet.<br>The desk is one door away.</div>';
+  page.innerHTML =
+    '<div class="rp-chapter-num">Chapter ' + roman(readingIndex + 1) + '</div>' +
+    '<div class="rp-title">' + esc(ch.title || 'Untitled') + '</div>' +
+    '<div class="rp-ornament"><span></span></div>' +
+    body;
+  $('readingFolio').textContent = esc(w.title) + ' · chapter ' + (readingIndex + 1) + ' of ' + w.chapters.length;
+}
+
+function turnPage(dir) {
+  const w = currentWork();
+  const next = readingIndex + dir;
+  if (next < 0 || next >= w.chapters.length) return;
+  const page = $('readingPage');
+  paperSound('turn');
+  if (reducedMotion) { readingIndex = next; renderReadingPage(); return; }
+  page.classList.add(dir > 0 ? 'turn-away' : 'turn-toward');
+  setTimeout(() => {
+    readingIndex = next;
+    renderReadingPage();
+    page.classList.remove('turn-away', 'turn-toward');
+    page.style.transition = 'none';
+    page.classList.add(dir > 0 ? 'turn-toward' : 'turn-away');
+    void page.offsetWidth;
+    page.style.transition = '';
+    page.classList.remove('turn-away', 'turn-toward');
+  }, 380);
+}
+
+/* ================================================================
+   THE BINDERY — new notebook ritual
+   ================================================================ */
+let binding = { kind: null, title: '', pigment: 'clay' };
+
+function enterBindery() {
+  binding = { kind: null, title: '', pigment: 'clay' };
+  renderKindShelf();
+  renderPigmentRow();
+  bindStepTo(1);
+  goRoom('bindery');
+}
+function leaveBindery() { renderLibrary(); goRoom('library'); }
+
+function bindStepTo(n) {
+  [1, 2, 3].forEach(i => $('bindStep' + i).classList.toggle('now', i === n));
+  if (n === 2) setTimeout(() => $('bindTitleInput').focus(), 350);
+}
+
+function renderKindShelf() {
+  const shelf = $('kindShelf');
+  shelf.innerHTML = '';
+  KINDS.forEach(k => {
+    const pig = PIGMENTS.find(p => p.id === k.pigment);
+    const b = document.createElement('button');
+    b.className = 'kind-book';
+    b.innerHTML =
+      '<span class="kb-spine" style="background:linear-gradient(90deg, ' + pig.hex + 'ee, ' + pig.hex + ')"><i>' + k.id + '</i></span>' +
+      '<span class="kb-name">' + k.id + '</span>';
+    b.onclick = () => {
+      binding.kind = k.id;
+      binding.pigment = k.pigment;
+      shelf.querySelectorAll('.kind-book').forEach(x => x.classList.remove('chosen'));
+      b.classList.add('chosen');
+      $('bindKindEcho').textContent = 'A ' + k.id.toLowerCase() + ', then. A fine choice.';
+      setTimeout(() => bindStepTo(2), 350);
+    };
+    shelf.appendChild(b);
+  });
+}
+
+function renderPigmentRow() {
+  const row = $('pigmentRow');
+  row.innerHTML = '';
+  PIGMENTS.forEach(p => {
+    const wrap = document.createElement('div');
+    const dot = document.createElement('button');
+    dot.className = 'pigment-dot' + (p.id === binding.pigment ? ' chosen' : '');
+    dot.style.background = 'radial-gradient(circle at 35% 30%, ' + p.hex + 'ee, ' + p.hex + ')';
+    dot.setAttribute('aria-label', p.name + ' cloth');
+    dot.onclick = () => {
+      binding.pigment = p.id;
+      row.querySelectorAll('.pigment-dot').forEach(x => x.classList.remove('chosen'));
+      dot.classList.add('chosen');
+    };
+    const name = document.createElement('span');
+    name.className = 'pigment-name';
+    name.textContent = p.name;
+    wrap.appendChild(dot); wrap.appendChild(name);
+    row.appendChild(wrap);
+  });
+}
+
+function placeOnShelf() {
+  binding.title = $('bindTitleInput').value.trim();
+  if (!binding.title) { bindStepTo(2); $('bindTitleInput').focus(); return; }
+  const nid = Math.max(0, ...S.works.map(w => w.id)) + 1;
+  const work = {
+    id: nid,
+    title: binding.title,
+    kind: binding.kind || 'Journal',
+    year: new Date().getFullYear(),
+    status: 'draft',
+    pigment: binding.pigment,
+    opens: 1,
+    anchors: [],
+    chapters: [{ id: 1, title: '', content: '' }]
+  };
+  S.works.push(work);
+  S.currentWorkId = nid;
+  S.currentChapterId = 1;
+  S.lastSession = { workId: nid, chapterId: 1, when: 'a moment ago' };
+  saveState(S);
+  $('bindTitleInput').value = '';
+  paperSound('open');
+  renderDesk();
+  goRoom('desk');
+  setTimeout(() => $('sheetBody').focus(), 700);
+}
+
+/* ================================================================
+   KEYBOARD — the room listens
+   ================================================================ */
+document.addEventListener('keydown', (e) => {
+  const readingHere = $('reading').classList.contains('here');
+  if (readingHere) {
+    if (e.key === 'ArrowRight') turnPage(1);
+    if (e.key === 'ArrowLeft') turnPage(-1);
+    if (e.key === 'Escape') leaveReading();
+    return;
+  }
+  if (e.key === 'Escape') {
+    if ($('ritualVeil').classList.contains('here')) { finishRitual(null); return; }
+    if ($('bindery').classList.contains('here')) { leaveBindery(); return; }
+    if ($('contentsCol').classList.contains('opened')) { $('contentsCol').classList.remove('opened'); return; }
+  }
+});
+
+/* ================================================================
+   BEGIN
+   ================================================================ */
+if (S.sound) {
+  const b = document.getElementById('soundToggle');
+  b.textContent = 'the room has sound';
+  b.setAttribute('aria-pressed', 'true');
+}
+renderLibrary();
 </script>
 </body>
 </html>
