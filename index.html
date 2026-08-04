@@ -5,37 +5,53 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FolioOS — The Writing Room</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Sans:wght@400;500&display=swap');
 
-  :root {
-    --paper:        #F2E8D4;
-    --paper-deep:   #EBE0C8;
-    --bone:         #FBF6EC;
-    --linen:        #EDE4CF;
-    --ink:          #2A2219;
-    --ink-soft:     #5E5344;
-    --graphite:     #8B7E6B;
-    --rule:         #D9CDB9;
-    --lamp-top:     rgba(228,190,120,0.30);
-    --lamp-bottom:  rgba(51,36,21,0.10);
-    --accent:       #B08744;
-    --selection:    rgba(176,135,68,0.25);
-    --dust-color:   rgba(220,190,140,0.55);
-    --clay:         #9E5236;
-    --ochre:        #B08744;
-    --moss:         #67714F;
-    --indigo:       #39424F;
-    --mulberry:     #6D4650;
-    --umber:        #55402C;
-    --walnut:       #4A3523;
-    --walnut-deep:  #332415;
-    --walnut-edge:  #7a5c3b;
-    --walnut-face:  #5d442c;
-    --brass:        #A88A52;
-    --glide: cubic-bezier(0.22, 1, 0.36, 1);
-    --settle: cubic-bezier(0.33, 1, 0.68, 1);
-    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --theme-speed: 0.8s;
+:root {
+  --paper:        #F2E8D4;
+  --paper-deep:   #EBE0C8;
+  --bone:         #FBF6EC;
+  --linen:        #EDE4CF;
+  --ink:          #2A2219;
+  --ink-soft:     #5E5344;
+  --graphite:     #8B7E6B;
+  --rule:         #D9CDB9;
+  --lamp-top:     rgba(228,190,120,0.30);
+  --lamp-bottom:  rgba(51,36,21,0.10);
+  --accent:       #B08744;
+  --selection:    rgba(176,135,68,0.25);
+  --dust-color:   rgba(220,190,140,0.55);
+  --clay:         #9E5236;
+  --ochre:        #B08744;
+  --moss:         #67714F;
+  --indigo:       #39424F;
+  --mulberry:     #6D4650;
+  --umber:        #55402C;
+  --walnut:       #4A3523;
+  --walnut-deep:  #332415;
+  --walnut-edge:  #7a5c3b;
+  --walnut-face:  #5d442c;
+  --brass:        #A88A52;
+  --glide: cubic-bezier(0.22, 1, 0.36, 1);
+  --settle: cubic-bezier(0.33, 1, 0.68, 1);
+  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --theme-speed: 0.8s;
+}
+
+[data-theme="dawn"] {
+  --paper:        #F2E8D4;
+  --paper-deep:   #EBE0C8;
+  --bone:         #FBF6EC;
+  --linen:        #EDE4CF;
+  --ink:          #2A2219;
+  --ink-soft:     #5E5344;
+  --graphite:     #8B7E6B;
+  --rule:         #D9CDB9;
+  --lamp-top:     rgba(228,190,120,0.30);
+  --lamp-bottom:  rgba(51,36,21,0.10);
+  --accent:       #B08744;
+  --selection:    rgba(176,135,68,0.25);
+  --dust-color:   rgba(220,190,140,0.55);
 }
 
 [data-theme="afternoon"] {
@@ -130,20 +146,21 @@ body::before {
   z-index: 2;
   background: radial-gradient(circle, var(--lamp-top) 0%, transparent 70%);
   transform: translate(-50%, -50%);
-  opacity: 0.5;
+  opacity: 0.32;
   mix-blend-mode: soft-light;
-  transition: opacity 0.3s;
+  transition: opacity 1.2s var(--glide);
 }
+.cursor-glow.dimmed { opacity: 0; }
 
 .vignette {
   position: fixed; inset: 0;
   pointer-events: none;
   z-index: 199;
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.1) 100%);
-  animation: breatheVignette 8s ease-in-out infinite;
+  animation: breatheVignette 150s ease-in-out infinite;
 }
 @keyframes breatheVignette {
-  0%, 100% { opacity: 0.7; }
+  0%, 100% { opacity: 0.65; }
   50% { opacity: 1; }
 }
 
@@ -177,8 +194,7 @@ body::before {
   z-index: 9999;
   transform: translate(-50%, -50%);
   transition: width 0.2s, height 0.2s, background 0.2s, opacity 0.2s, border 0.2s;
-  mix-blend-mode: difference;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 .ink-cursor.hovering {
   width: 28px; height: 28px;
@@ -235,6 +251,62 @@ input, textarea { font: inherit; color: inherit; }
 .room::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; transition: background var(--theme-speed); }
 .room::-webkit-scrollbar-track { background: transparent; }
 
+/* ================================================================
+   THE ARRIVAL — five stages of entering the room
+   Recognition → Invitation → Adjustment → Discovery → Presence
+   The room does not appear. It reveals itself.
+   ================================================================ */
+
+/* Stage 3 — Adjustment: the eyes adapting.
+   A full-screen veil of outside light (warmer, sunset-tinted) that
+   lifts slowly as the interior resolves. Light-based, not blur. */
+.adjustment-veil {
+  position: fixed; inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 30%,
+      rgba(226,168,96,0.28), rgba(42,30,16,0.55) 90%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2.6s var(--glide), visibility 2.6s;
+}
+.adjustment-veil.adjusting { opacity: 1; visibility: visible; transition: opacity .1s; }
+.adjustment-veil.lifting   { opacity: 0; visibility: visible; }
+
+/* The library approaching — three slow steps forward.
+   Not zoom. Approach. 2.5% over 3.2 seconds. */
+#library .library-inner {
+  transform-origin: 50% 40%;
+}
+#library.approaching .library-inner {
+  animation: roomApproach 3.2s var(--glide) forwards;
+}
+@keyframes roomApproach {
+  from { transform: scale(0.975) translateY(6px); }
+  to   { transform: scale(1) translateY(0); }
+}
+
+/* Stage 4 — Discovery: shelves emerge first. Always books first. */
+#library.arriving .shelf,
+#library.arriving .desk-memory,
+#library.arriving .library-masthead,
+#library.arriving .library-greeting {
+  opacity: 0;
+}
+#library.arriving .shelf {
+  animation: elementArrive 1.6s var(--glide) forwards;
+}
+#library.arriving .shelf:nth-of-type(2) { animation-delay: .35s; }
+/* Stage 5 — Presence: the desk memory, then the room's voice. */
+#library.arriving .desk-memory      { animation: elementArrive 1.4s var(--glide) 1.1s forwards; }
+#library.arriving .library-greeting { animation: elementArrive 1.4s var(--glide) 1.7s forwards; }
+#library.arriving .library-masthead { animation: elementArrive 1.4s var(--glide) 2.1s forwards; }
+@keyframes elementArrive {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 #threshold {
   z-index: 100;
   display: flex; flex-direction: column;
@@ -244,6 +316,16 @@ input, textarea { font: inherit; color: inherit; }
   text-align: center;
   gap: 18px;
   transition: background var(--theme-speed);
+}
+/* Stage 1 — Recognition: outside, the room only hinted at.
+   The threshold carries outside light — warmer, lower sun. */
+#threshold::before {
+  content:'';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 100%,
+      rgba(226,168,96,0.16), transparent 65%);
+  pointer-events: none;
 }
 .threshold-date {
   font-family: 'EB Garamond', serif;
@@ -694,7 +776,7 @@ input, textarea { font: inherit; color: inherit; }
   transform-origin: top right;
   box-shadow: -2px 2px 4px rgba(0,0,0,0.08);
 }
-.sheet:hover .sheet-curl {
+.sheet:hover:not(:focus-within) .sheet-curl {
   opacity: 1;
   transform: rotate(-5deg) scale(1.05);
 }
@@ -950,7 +1032,6 @@ input, textarea { font: inherit; color: inherit; }
   .vignette { display: none; }
 }
 </style>
-<base target="_blank">
 </head>
 <body data-theme="afternoon">
 
@@ -963,8 +1044,10 @@ input, textarea { font: inherit; color: inherit; }
 <div class="room here" id="threshold" role="button" tabindex="0" aria-label="Enter the writing room">
   <div class="threshold-date" id="thresholdDate"></div>
   <div class="threshold-line" id="thresholdLine">The lamp is on.</div>
-  <div class="threshold-hint">touch anywhere to enter</div>
+  <div class="threshold-hint">step inside</div>
 </div>
+
+<div class="adjustment-veil" id="adjustmentVeil" aria-hidden="true"></div>
 
 <div class="room" id="library">
   <div class="library-inner">
@@ -1162,24 +1245,25 @@ function paperSound(kind) {
     const dur = kind === 'turn' ? 0.14 : kind === 'open' ? 0.25 : 0.18;
     const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
     const d = buf.getChannelData(0);
-    for (let i = 0; i < d.length; i++) {
-       const t = i / d.length;
-       d[i] = (Math.random()*2-1)*Math.pow(1-t,2.2)*0.5;
-     }
+    for (let i = 0; i < d.length; i++) { 
+      const t = i / d.length; 
+      d[i] = (Math.random()*2-1)*Math.pow(1-t,2.2)*0.5; 
+    }
     const src = audioCtx.createBufferSource(); src.buffer = buf;
-    const flt = audioCtx.createBiquadFilter();
-     flt.type='lowpass';
-     flt.frequency.value = kind==='turn'?2600: kind==='open'?1800:1600;
-    const gn = audioCtx.createGain();
-     gn.gain.value = kind==='open'?0.12:0.16;
-    src.connect(flt); flt.connect(gn); gn.connect(audioCtx.destination);
-     src.start();
+    const flt = audioCtx.createBiquadFilter(); 
+    flt.type='lowpass'; 
+    flt.frequency.value = kind==='turn'?2600: kind==='open'?1800:1600;
+    const gn = audioCtx.createGain(); 
+    gn.gain.value = kind==='open'?0.12:0.16;
+    src.connect(flt); flt.connect(gn); gn.connect(audioCtx.destination); 
+    src.start();
   } catch(e){}
 }
 
 function shelfCreak() {
-  if (!S.sound || !audioCtx) return;
+  if (!S.sound) return;
   try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const dur = 0.4;
     const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * dur, audioCtx.sampleRate);
     const d = buf.getChannelData(0);
@@ -1287,29 +1371,26 @@ function initMouseSystem() {
     mouseY = e.clientY;
   });
 
-  function animateGlow() {
+  /* One rAF loop drives both the glow and the ink cursor —
+     two lerp speeds, one frame budget. */
+  const glowEl   = $('cursorGlow');
+  const cursorEl = $('inkCursor');
+  function animateCursorSystem() {
     cursorGlowX += (mouseX - cursorGlowX) * 0.08;
     cursorGlowY += (mouseY - cursorGlowY) * 0.08;
-    const glow = $('cursorGlow');
-    if (glow) {
-      glow.style.left = cursorGlowX + 'px';
-      glow.style.top = cursorGlowY + 'px';
+    inkCursorX  += (mouseX - inkCursorX)  * 0.15;
+    inkCursorY  += (mouseY - inkCursorY)  * 0.15;
+    if (glowEl) {
+      glowEl.style.left = cursorGlowX + 'px';
+      glowEl.style.top  = cursorGlowY + 'px';
     }
-    requestAnimationFrame(animateGlow);
-  }
-  animateGlow();
-
-  function animateInkCursor() {
-    inkCursorX += (mouseX - inkCursorX) * 0.15;
-    inkCursorY += (mouseY - inkCursorY) * 0.15;
-    const cursor = $('inkCursor');
-    if (cursor) {
-      cursor.style.left = inkCursorX + 'px';
-      cursor.style.top = inkCursorY + 'px';
+    if (cursorEl) {
+      cursorEl.style.left = inkCursorX + 'px';
+      cursorEl.style.top  = inkCursorY + 'px';
     }
-    requestAnimationFrame(animateInkCursor);
+    requestAnimationFrame(animateCursorSystem);
   }
-  animateInkCursor();
+  animateCursorSystem();
 
   document.addEventListener('mouseover', (e) => {
     const cursor = $('inkCursor');
@@ -1338,18 +1419,21 @@ function initMouseSystem() {
     });
   });
 
-  $('manuscriptSheet').addEventListener('click', (e) => {
-    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
-    const ripple = document.createElement('div');
-    ripple.className = 'ink-ripple';
-    const rect = $('manuscriptSheet').getBoundingClientRect();
-    ripple.style.left = (e.clientX - rect.left - 10) + 'px';
-    ripple.style.top = (e.clientY - rect.top - 10) + 'px';
-    ripple.style.width = '20px';
-    ripple.style.height = '20px';
-    $('manuscriptSheet').appendChild(ripple);
-    setTimeout(() => ripple.remove(), 800);
-  });
+  const ms = $('manuscriptSheet');
+  if (ms) {
+    ms.addEventListener('click', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      const ripple = document.createElement('div');
+      ripple.className = 'ink-ripple';
+      const rect = ms.getBoundingClientRect();
+      ripple.style.left = (e.clientX - rect.left - 10) + 'px';
+      ripple.style.top = (e.clientY - rect.top - 10) + 'px';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      ms.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 800);
+    });
+  }
 }
 
 function goRoom(id){
@@ -1357,6 +1441,19 @@ function goRoom(id){
   const room=$(id); room.classList.add('here'); room.scrollTop=0;
 }
 
+/* ================================================================
+   THE ARRIVAL — the scene, not the transition
+   ----------------------------------------------------------------
+   Stage 1  Recognition  — outside; the line scrambles into being
+   Stage 2  Invitation   — "step inside"
+   Stage 3  Adjustment   — light shifts from sunset to paper;
+                            a veil of outside light lifts slowly
+   Stage 4  Discovery    — shelves emerge first; always books first
+   Stage 5  Presence     — the desk memory, the greeting, the
+                            masthead; dust begins; you are there
+   Total: ~3.6s. Skippable by clicking during the veil.
+   Reduced motion: instant, no veil, no stagger.
+   ================================================================ */
 (function initThreshold(){
   const now=new Date();
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1365,22 +1462,67 @@ function goRoom(id){
   const theme = S.theme || autoTheme();
   setTheme(theme);
 
+  /* Stage 1 — Recognition. The scramble waits for the fade-in
+     (Bug 7 fix: fires at 950ms so the resolve is visible). */
   const lineEl = $('thresholdLine');
   const scrambler = new TextScramble(lineEl);
   setTimeout(() => {
     scrambler.setText(THRESHOLD_MSGS[theme] || 'The lamp is on.');
-  }, 300);
+  }, 950);
 
-  const enter=()=>{
-    const t=$('threshold');
-    if(t.classList.contains('leaving'))return;
+  let arrived = false;
+  const enter = () => {
+    if (arrived) return;
+    arrived = true;
+    const t    = $('threshold');
+    const veil = $('adjustmentVeil');
+    const lib  = $('library');
+    const glow = $('cursorGlow');
+
+    if (reducedMotion) {
+      t.classList.remove('here');
+      goRoom('library');
+      return;
+    }
+
+    /* Stage 3 — Adjustment begins.
+       The warm cursor glow disappears — outside light fading. */
+    if (glow) glow.classList.add('dimmed');
     t.classList.add('leaving');
-    paperSound('open');
-    setTimeout(()=>{t.classList.remove('here');goRoom('library');},700);
+    veil.classList.add('adjusting');
+    paperSound('open');           /* the door */
+
+    /* The threshold is gone; we are in the dark of the doorway. */
+    setTimeout(() => {
+      t.classList.remove('here');
+
+      /* Stage 4 — Discovery. The library exists beneath the veil.
+         Shelves are staged to emerge first via .arriving. */
+      lib.classList.add('arriving','approaching');
+      goRoom('library');
+
+      /* The veil lifts — eyes adjusting to the interior light. */
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        veil.classList.remove('adjusting');
+        veil.classList.add('lifting');
+      }));
+
+      /* A page turns somewhere in the room. */
+      setTimeout(() => paperSound('turn'), 900);
+
+      /* Stage 5 — Presence. The room settles; the glow returns;
+         arrival classes are removed so re-renders stay clean. */
+      setTimeout(() => {
+        if (glow) glow.classList.remove('dimmed');
+        veil.classList.remove('lifting');
+        lib.classList.remove('arriving','approaching');
+      }, 3600);
+    }, 750);
   };
+
   $('threshold').addEventListener('click',enter);
   $('threshold').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')enter();});
-  setTimeout(enter,4200);
+  setTimeout(enter,4600);
 })();
 
 function spineWidth(w){const words=workWords(w);return Math.min(64,36+Math.floor(words/260));}
