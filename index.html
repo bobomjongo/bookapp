@@ -239,6 +239,30 @@
   .menu button:hover{background:var(--paper-deep);color:var(--ink);}
   .menu .dotb{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle;}
   .menu .sep{height:1px;background:var(--rule);margin:4px 2px;}
+
+  /* compile */
+  .compile-btn{font-family:'Instrument Sans',sans-serif;font-size:11px;letter-spacing:.05em;padding:7px 15px;border-radius:7px;border:1px solid var(--rule);background:var(--bone);color:var(--ink-soft);transition:all .2s;}
+  .compile-btn:hover{border-color:var(--clay);color:var(--clay);}
+  .veil{position:fixed;inset:0;z-index:400;background:rgba(30,24,17,.44);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s;}
+  .veil.show{opacity:1;visibility:visible;}
+  .modal{background:var(--bone);border:1px solid var(--rule);border-radius:9px;box-shadow:0 26px 64px rgba(0,0,0,.36);width:460px;max-width:92vw;max-height:90vh;overflow:auto;padding:30px 32px;}
+  .modal h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:27px;line-height:1.05;}
+  .modal .sub{font-style:italic;color:var(--ink-soft);margin-bottom:24px;font-size:16px;}
+  .modal .flabel{font-family:'Instrument Sans',sans-serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin:18px 0 8px;}
+  .fmt-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+  .fmt{text-align:center;padding:13px 4px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);cursor:pointer;transition:all .18s;}
+  .fmt .ic{font-size:19px;display:block;margin-bottom:5px;line-height:1;}
+  .fmt .nm{font-family:'Instrument Sans',sans-serif;font-size:10px;letter-spacing:.03em;}
+  .fmt.on{border-color:var(--clay);background:var(--paper-deep);color:var(--ink);box-shadow:0 2px 9px rgba(158,82,54,.2);}
+  .scope-sel{width:100%;padding:9px 11px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);font-family:'EB Garamond',serif;font-size:16px;outline:none;}
+  .opt-row{display:flex;align-items:center;gap:11px;margin:11px 0;cursor:pointer;font-size:15.5px;user-select:none;}
+  .opt-box{width:19px;height:19px;border:1px solid var(--rule);border-radius:5px;background:var(--paper);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--clay);flex-shrink:0;}
+  .modal-actions{display:flex;justify-content:flex-end;align-items:center;gap:20px;margin-top:28px;}
+  .modal-actions .cancel{font-style:italic;color:var(--ink-soft);}
+  .modal-actions .cancel:hover{color:var(--clay);}
+  .modal-actions .go{background:var(--clay);color:var(--bone);padding:10px 24px;border-radius:7px;font-family:'Instrument Sans',sans-serif;font-size:13px;letter-spacing:.03em;transition:background .2s;}
+  .modal-actions .go:hover{background:var(--umber);}
+  .compile-note{font-size:12.5px;color:var(--graphite);font-style:italic;margin-top:14px;line-height:1.45;}
 </style>
 </head>
 <body>
@@ -268,6 +292,7 @@
     </div>
     <button class="ticon" id="scrivBtn" title="Scrivenings — edit a whole folder as one flowing manuscript">⇉</button>
     <button class="ticon on" id="inspBtn" title="Toggle the inspector">◧</button>
+    <button class="compile-btn" onclick="openCompile()" title="Compile your novel into PDF, Word, Markdown…">Compile</button>
   </div>
   <div class="frame" id="frame">
     <aside class="binder">
@@ -667,6 +692,217 @@ document.getElementById('inspBtn').addEventListener('click',()=>{ inspectorOn=!i
 // ---------------- export ----------------
 function exportAll(){ const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='folio-novels-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); }
 
+// ================= COMPILE / EXPORT =================
+let compileFmt='pdf';
+function openCompile(){
+  const old=document.getElementById('compileVeil'); if(old)old.remove();
+  const selNode=selId?findNode(selId):null;
+  const selFolder=(selNode&&selNode.type==='folder')?selNode:null;
+  const v=document.createElement('div'); v.className='veil'; v.id='compileVeil';
+  v.innerHTML=
+    '<div class="modal"><h2>Compile — '+esc(cur.title||'Untitled')+'</h2>'+
+    '<div class="sub">Gather your novel into one finished document.</div>'+
+    '<div class="flabel">Format</div><div class="fmt-row" id="fmtRow">'+
+      fmtBtn('pdf','⎙','PDF')+fmtBtn('docx','❐','Word')+fmtBtn('md','M','Markdown')+fmtBtn('txt','¶','Text')+fmtBtn('html','◇','HTML')+
+    '</div>'+
+    '<div class="flabel">What to include</div>'+
+    '<select class="scope-sel" id="scopeSel"><option value="all">The whole novel</option>'+(selFolder?'<option value="folder">Only “'+esc(selFolder.name)+'”</option>':'')+'</select>'+
+    '<div class="flabel">Options</div>'+
+    optRow('titlePage',true,'Title page')+
+    optRow('titles',true,'Print section titles (folders &amp; documents)')+
+    optRow('breaks',false,'Start each part on a new page <span style="color:var(--graphite);font-size:12px">· PDF &amp; Word</span>')+
+    '<div class="compile-note" id="fmtNote"></div>'+
+    '<div class="modal-actions"><button class="cancel" onclick="closeCompile()">not now</button><button class="go" onclick="runCompile()">Compile</button></div>'+
+    '</div>';
+  document.body.appendChild(v);
+  requestAnimationFrame(()=>v.classList.add('show'));
+  v.addEventListener('click',e=>{ if(e.target===v)closeCompile(); });
+  v.querySelector('#fmtRow').addEventListener('click',e=>{ const f=e.target.closest('.fmt'); if(!f)return; compileFmt=f.dataset.f; v.querySelectorAll('.fmt').forEach(x=>x.classList.toggle('on',x.dataset.f===compileFmt)); fmtNote(); });
+  v.querySelectorAll('.opt-row').forEach(r=>r.addEventListener('click',()=>{ const b=r.querySelector('.opt-box'); b.textContent=b.textContent.trim()?'':'✓'; }));
+  fmtNote();
+}
+function fmtBtn(f,ic,nm){ return '<div class="fmt'+(f===compileFmt?' on':'')+'" data-f="'+f+'"><span class="ic">'+ic+'</span><span class="nm">'+nm+'</span></div>'; }
+function optRow(key,on,label){ return '<div class="opt-row" data-opt="'+key+'"><span class="opt-box">'+(on?'✓':'')+'</span> '+label+'</div>'; }
+function fmtNote(){ const n=document.getElementById('fmtNote'); if(!n)return; const t={
+  pdf:'Opens your browser’s print window — choose “Save as PDF”. Best-looking result.',
+  docx:'A real Word document (.docx) — opens in Word, Pages and Google Docs.',
+  md:'Markdown with # headings — for Obsidian, Ulysses, iA Writer, anywhere.',
+  txt:'Plain text — no formatting, just the words.',
+  html:'A styled web page you can open in any browser.'}[compileFmt]; n.textContent=t; }
+function closeCompile(){ const v=document.getElementById('compileVeil'); if(v){ v.classList.remove('show'); setTimeout(()=>v.remove(),240); } }
+function isOn(v,key){ const el=v.querySelector('[data-opt="'+key+'"] .opt-box'); return !!(el&&el.textContent.trim()); }
+function runCompile(){
+  const v=document.getElementById('compileVeil');
+  const opt={ titlePage:isOn(v,'titlePage'), titles:isOn(v,'titles'), breaks:isOn(v,'breaks') };
+  const scope=v.querySelector('#scopeSel').value;
+  const roots = (scope==='folder' && selId)? [findNode(selId)] : cur.binder;
+  const ir=buildIR(roots,opt);
+  const base=slug(cur.title||'novel');
+  if(compileFmt==='md') download(base+'.md', renderMD(ir), 'text/markdown');
+  else if(compileFmt==='txt') download(base+'.txt', renderTXT(ir), 'text/plain');
+  else if(compileFmt==='html') download(base+'.html', renderHTMLDoc(ir,opt,false), 'text/html');
+  else if(compileFmt==='docx') downloadBytes(base+'.docx', buildDocx(ir,opt), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  else printPDF(renderHTMLDoc(ir,opt,true));
+  closeCompile();
+}
+
+// ---- intermediate representation ----
+function buildIR(roots,opt){
+  const ir=[];
+  if(opt.titlePage) ir.push({kind:'title',title:cur.title||'Untitled',author:cur.author||'',subtitle:cur.subtitle||''});
+  (function walk(nodes,level){
+    let prevDoc=false;
+    (nodes||[]).forEach(n=>{
+      if(!n) return;
+      if(n.type==='folder'){ ir.push({kind:'heading',level:Math.min(level,3),text:n.name,part:level===1}); prevDoc=false; walk(n.children,level+1); }
+      else {
+        if(opt.titles) ir.push({kind:'heading',level:Math.min(level,4),text:n.name});
+        else if(prevDoc) ir.push({kind:'break'});
+        htmlToParas(n.content).forEach(p=>ir.push({kind:'para',runs:p}));
+        prevDoc=true;
+      }
+    });
+  })(roots,1);
+  return ir;
+}
+function htmlToParas(html){
+  if(!html||!html.trim()) return [];
+  let root;
+  try{ root=new DOMParser().parseFromString('<div id="r">'+html+'</div>','text/html').getElementById('r'); }
+  catch(e){ return html.replace(/<[^>]+>/g,' ').split(/\n+/).filter(x=>x.trim()).map(t=>[{text:t,bold:false,italic:false}]); }
+  const blocks=[...root.children].filter(e=>/^(P|DIV|H\d|BLOCKQUOTE|LI)$/.test(e.tagName));
+  const paras=[];
+  if(blocks.length){ blocks.forEach(b=>{ const runs=[]; inlineRuns(b,false,false,runs); const m=mergeRuns(runs); if(m.some(r=>r.text.trim())) paras.push(m); }); }
+  else { const runs=[]; inlineRuns(root,false,false,runs); const m=mergeRuns(runs); const txt=m.map(r=>r.text).join(''); txt.split(/\n+/).forEach(l=>{ if(l.trim()) paras.push([{text:l,bold:false,italic:false}]); }); }
+  return paras;
+}
+function inlineRuns(node,bold,italic,out){
+  node.childNodes.forEach(ch=>{
+    if(ch.nodeType===3){ if(ch.textContent) out.push({text:ch.textContent,bold,italic}); }
+    else if(ch.nodeType===1){ const t=ch.tagName; if(t==='BR'){ out.push({text:'\n',bold,italic}); return; }
+      inlineRuns(ch, bold||t==='B'||t==='STRONG', italic||t==='I'||t==='EM', out); }
+  });
+}
+function mergeRuns(runs){ const out=[]; runs.forEach(r=>{ const l=out[out.length-1]; if(l&&l.bold===r.bold&&l.italic===r.italic) l.text+=r.text; else out.push({text:r.text,bold:r.bold,italic:r.italic}); }); return out; }
+
+// ---- markdown ----
+function runsMD(runs){ return runs.map(r=>{ let t=r.text.replace(/\n/g,' '); if(r.bold)t='**'+t+'**'; if(r.italic)t='*'+t+'*'; return t; }).join(''); }
+function renderMD(ir){ let o=''; ir.forEach(x=>{
+  if(x.kind==='title') o+='# '+x.title+'\n\n'+(x.subtitle?'*'+x.subtitle+'*\n\n':'')+(x.author?'by '+x.author+'\n\n':'')+'---\n\n';
+  else if(x.kind==='heading') o+='\n'+'#'.repeat(Math.min(x.level+1,6))+' '+x.text+'\n\n';
+  else if(x.kind==='break') o+='\n* * *\n\n';
+  else if(x.kind==='para') o+=runsMD(x.runs)+'\n\n';
+}); return o.trim()+'\n'; }
+
+// ---- plain text ----
+function renderTXT(ir){ let o=''; ir.forEach(x=>{
+  if(x.kind==='title') o+=(x.title||'').toUpperCase()+'\n'+(x.subtitle?x.subtitle+'\n':'')+(x.author?'by '+x.author+'\n':'')+'\n\n';
+  else if(x.kind==='heading') o+='\n'+(x.level===1?(x.text||'').toUpperCase():x.text)+'\n\n';
+  else if(x.kind==='break') o+='\n          *  *  *\n\n';
+  else if(x.kind==='para') o+=x.runs.map(r=>r.text.replace(/\n/g,' ')).join('')+'\n\n';
+}); return o.trim()+'\n'; }
+
+// ---- html / pdf ----
+function runsHTML(runs){ return runs.map(r=>{ let t=esc(r.text).replace(/\n/g,'<br>'); if(r.bold)t='<strong>'+t+'</strong>'; if(r.italic)t='<em>'+t+'</em>'; return t; }).join(''); }
+function renderHTMLDoc(ir,opt,forPrint){
+  let body='';
+  ir.forEach(x=>{
+    if(x.kind==='title') body+='<div class="tp"><h1 class="tt">'+esc(x.title)+'</h1>'+(x.subtitle?'<div class="ts">'+esc(x.subtitle)+'</div>':'')+(x.author?'<div class="ta">by '+esc(x.author)+'</div>':'')+'</div>';
+    else if(x.kind==='heading'){ const L=Math.min(x.level+1,6); body+='<h'+L+' class="hd'+(x.part?' part':'')+'">'+esc(x.text)+'</h'+L+'>'; }
+    else if(x.kind==='break') body+='<div class="sb">◆</div>';
+    else if(x.kind==='para') body+='<p>'+runsHTML(x.runs)+'</p>';
+  });
+  let css="body{font-family:'EB Garamond',Georgia,serif;color:#221b12;max-width:44rem;margin:0 auto;padding:56px 40px;line-height:1.7;font-size:19px;}"+
+    "h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;text-align:center;line-height:1.15;}"+
+    "h2{font-size:30px;margin:2.4em 0 1em;} h3{font-size:24px;margin:2em 0 .8em;} h4{font-size:20px;font-style:italic;margin:1.6em 0 .6em;color:#5E5344;}"+
+    "p{margin:0 0 .2em;text-indent:1.5em;} p+p{text-indent:1.5em;} .sb{text-align:center;color:#9E5236;margin:1.8em 0;letter-spacing:.3em;}"+
+    ".tp{text-align:center;padding:22vh 0 8vh;} .tt{font-size:52px;} .ts{font-style:italic;font-size:20px;color:#5E5344;margin-top:.4em;} .ta{margin-top:2em;font-size:18px;color:#5E5344;}";
+  if(forPrint){ css+="@page{margin:1in;} .tp{min-height:80vh;page-break-after:always;padding-top:26vh;}"; if(opt.breaks) css+=".part{page-break-before:always;}"; }
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(cur.title||'Novel')+'</title>'+
+    '<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,500&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">'+
+    '<style>'+css+'</style></head><body>'+body+'</body></html>';
+}
+function printPDF(html){
+  const f=document.createElement('iframe'); f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;';
+  document.body.appendChild(f);
+  const doc=f.contentWindow.document; doc.open(); doc.write(html); doc.close();
+  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){ console.error('print failed',e); } setTimeout(()=>f.remove(),2000); }, 400);
+}
+
+// ---- real .docx (inline STORE zip, no dependencies) ----
+function xesc(s){ return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function runXML(r){ const t=r.text.replace(/\n/g,' '); let rpr=''; if(r.bold||r.italic) rpr='<w:rPr>'+(r.bold?'<w:b/>':'')+(r.italic?'<w:i/>':'')+'</w:rPr>'; return '<w:r>'+rpr+'<w:t xml:space="preserve">'+xesc(t)+'</w:t></w:r>'; }
+function docxBody(ir,opt){
+  let x='';
+  ir.forEach(it=>{
+    if(it.kind==='title'){
+      x+='<w:p><w:pPr><w:pStyle w:val="Title"/></w:pPr><w:r><w:t xml:space="preserve">'+xesc(it.title)+'</w:t></w:r></w:p>';
+      if(it.subtitle) x+='<w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:i/></w:rPr><w:t xml:space="preserve">'+xesc(it.subtitle)+'</w:t></w:r></w:p>';
+      if(it.author) x+='<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="240"/></w:pPr><w:r><w:t xml:space="preserve">by '+xesc(it.author)+'</w:t></w:r></w:p>';
+      x+='<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+    } else if(it.kind==='heading'){
+      const hs='Heading'+Math.min(it.level,3);
+      const pb=(opt.breaks&&it.part)?'<w:pageBreakBefore/>':'';
+      x+='<w:p><w:pPr><w:pStyle w:val="'+hs+'"/>'+pb+'</w:pPr><w:r><w:t xml:space="preserve">'+xesc(it.text)+'</w:t></w:r></w:p>';
+    } else if(it.kind==='break'){
+      x+='<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="240" w:after="240"/></w:pPr><w:r><w:t>◆</w:t></w:r></w:p>';
+    } else if(it.kind==='para'){
+      x+='<w:p><w:pPr><w:ind w:firstLine="360"/></w:pPr>'+it.runs.map(runXML).join('')+'</w:p>';
+    }
+  });
+  return x;
+}
+function buildDocx(ir,opt){
+  const NS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"';
+  const document_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document '+NS+'><w:body>'+docxBody(ir,opt)+
+    '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>';
+  const styles_xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:styles '+NS+'>'+
+    '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:pPr><w:spacing w:after="140" w:line="288" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia"/><w:sz w:val="24"/></w:rPr></w:style>'+
+    '<w:style w:type="paragraph" w:styleId="Title"><w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:pPr><w:jc w:val="center"/><w:spacing w:before="2400" w:after="240"/></w:pPr><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:sz w:val="56"/></w:rPr></w:style>'+
+    '<w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:jc w:val="center"/><w:spacing w:before="480" w:after="160"/></w:pPr><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:b/><w:sz w:val="36"/></w:rPr></w:style>'+
+    '<w:style w:type="paragraph" w:styleId="Heading2"><w:name w:val="heading 2"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:jc w:val="center"/><w:spacing w:before="360" w:after="120"/></w:pPr><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:b/><w:sz w:val="30"/></w:rPr></w:style>'+
+    '<w:style w:type="paragraph" w:styleId="Heading3"><w:name w:val="heading 3"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:pPr><w:keepNext/><w:jc w:val="center"/><w:spacing w:before="280" w:after="100"/></w:pPr><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria"/><w:i/><w:sz w:val="26"/></w:rPr></w:style>'+
+    '</w:styles>';
+  const ct='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+    '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+    '<Default Extension="xml" ContentType="application/xml"/>'+
+    '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'+
+    '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>';
+  const rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+  const drels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+  const enc=new TextEncoder();
+  return zipStore([
+    {name:'[Content_Types].xml',bytes:enc.encode(ct)},
+    {name:'_rels/.rels',bytes:enc.encode(rels)},
+    {name:'word/document.xml',bytes:enc.encode(document_xml)},
+    {name:'word/styles.xml',bytes:enc.encode(styles_xml)},
+    {name:'word/_rels/document.xml.rels',bytes:enc.encode(drels)},
+  ]);
+}
+const CRC_TABLE=(()=>{ const t=[]; for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; } return t; })();
+function crc32(b){ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=CRC_TABLE[(c^b[i])&0xFF]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+function u8cat(arrs){ let n=0; arrs.forEach(a=>n+=a.length); const o=new Uint8Array(n); let p=0; arrs.forEach(a=>{o.set(a,p);p+=a.length;}); return o; }
+function zipStore(files){
+  const enc=new TextEncoder();
+  const u16=n=>new Uint8Array([n&255,(n>>8)&255]);
+  const u32=n=>new Uint8Array([n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255]);
+  const locals=[], centrals=[]; let offset=0;
+  files.forEach(f=>{
+    const name=enc.encode(f.name), data=f.bytes, crc=crc32(data);
+    const local=u8cat([u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),name,data]);
+    locals.push(local);
+    centrals.push(u8cat([u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(data.length),u32(data.length),u16(name.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset),name]));
+    offset+=local.length;
+  });
+  const cd=u8cat(centrals); const cdStart=offset;
+  const end=u8cat([u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cd.length),u32(cdStart),u16(0)]);
+  return u8cat([u8cat(locals),cd,end]);
+}
+function download(name,text,mime){ const b=new Blob([text],{type:(mime||'text/plain')+';charset=utf-8'}); trigger(name,b); }
+function downloadBytes(name,bytes,mime){ trigger(name,new Blob([bytes],{type:mime})); }
+function trigger(name,blob){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },100); }
+function slug(s){ return (s||'novel').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'novel'; }
+
 // ---------------- boot ----------------
 function boot(){
   load();
@@ -681,7 +917,8 @@ function boot(){
 boot();
 window.__ns={get DB(){return DB;}, get cur(){return cur;}, get view(){return view;}, get selId(){return selId;},
   sel:(id)=>{selId=id; renderWorkspace();}, setView:(v)=>{view=v; if(v!=='editor')scriv=false; renderWorkspace();}, setScriv:(b)=>{scriv=b; if(b)view='editor'; renderWorkspace();},
-  openProject, addNode, moveNode, deleteNode, restoreNode, findNode, nodeWords, manuscriptWords, setCloth, newNovel, locate, save, load};
+  openProject, addNode, moveNode, deleteNode, restoreNode, findNode, nodeWords, manuscriptWords, setCloth, newNovel, locate, save, load,
+  buildIR, renderMD, renderTXT, renderHTMLDoc, buildDocx, htmlToParas, openCompile};
 </script>
 </body>
 </html>
