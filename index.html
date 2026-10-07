@@ -128,7 +128,56 @@
   .row .mv button:hover{background:var(--paper-deep);color:var(--clay);}
   .row .mv button[data-del]{color:#8B5A4A;}
   .row .mv button[data-del]:hover{color:#C44536;background:var(--paper-deep);}
-  .confirm-delete{position:fixed;z-index:300;background:var(--bone);border:1px solid var(--rule);border-radius:9px;box-shadow:0 12px 40px rgba(42,34,25,.32);padding:24px 28px;max-width:360px;}
+  .cbox-veil{position:fixed;inset:0;z-index:299;background:rgba(30,24,17,.42);}
+  .confirm-delete{position:fixed;z-index:300;left:50%;top:50%;transform:translate(-50%,-50%);width:min(380px,calc(100vw - 32px));background:var(--bone);border:1px solid var(--rule);border-radius:9px;box-shadow:0 12px 40px rgba(42,34,25,.32);padding:24px 28px;}
+
+  /* sync pill + dot */
+  .sync-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--rule);border-radius:20px;background:var(--bone);font-family:'Instrument Sans',sans-serif;font-size:11px;letter-spacing:.03em;color:var(--ink-soft);transition:border-color .2s;}
+  .sync-pill:hover{border-color:var(--clay);}
+  .sync-pill.mini{padding:5px 9px;}
+  .sync-pill.mini .sync-txt{display:none;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--graphite);flex-shrink:0;}
+  .sync-pill[data-k="ok"] .sync-dot{background:var(--moss);}
+  .sync-pill[data-k="wait"] .sync-dot{background:var(--ochre);animation:pulse 1.4s ease-in-out infinite;}
+  .sync-pill[data-k="err"] .sync-dot{background:#C44536;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .lib-actions{align-items:center;flex-wrap:wrap;}
+
+  /* toast */
+  .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);z-index:500;max-width:min(440px,calc(100vw - 32px));background:var(--ink);color:var(--bone);padding:11px 18px;border-radius:9px;font-size:15px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .3s,transform .3s var(--glide);}
+  .toast.show{opacity:1;transform:translate(-50%,0);}
+
+  /* shelf: delete + recently deleted */
+  .novel{position:relative;}
+  .novel-x{position:absolute;top:-9px;right:-9px;width:30px;height:30px;border-radius:50%;background:var(--bone);border:1px solid var(--rule);color:var(--ink-soft);font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2);opacity:0;transition:opacity .2s;z-index:3;}
+  .novel:hover .novel-x,.novel-x:focus{opacity:1;}
+  .novel-x:hover{color:#C44536;border-color:#C44536;}
+  @media (hover:none){ .novel-x{opacity:1;} }
+  .rd{margin-top:56px;border-top:1px solid var(--rule);padding-top:18px;}
+  .rd-head{font-style:italic;color:var(--ink-soft);font-size:15px;}
+  .rd-head button{font-style:italic;color:var(--clay);margin-left:10px;border-bottom:1px solid transparent;}
+  .rd-head button:hover{border-bottom-color:var(--clay);}
+  .rd-row{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid rgba(217,205,185,.6);flex-wrap:wrap;}
+  .rd-row .t{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:18px;flex:1;min-width:140px;}
+  .rd-row .w{font-size:13px;color:var(--graphite);font-style:italic;}
+  .rd-row button{font-style:italic;font-size:14px;color:var(--ink-soft);}
+  .rd-row button:hover{color:var(--clay);}
+  .rd-row button.danger{color:#A63A2A;}
+  .danger-link{display:inline-block;margin-top:30px;font-style:italic;font-size:14px;color:#A63A2A;border-bottom:1px solid transparent;}
+  .danger-link:hover{border-bottom-color:#A63A2A;}
+
+  /* account sheet */
+  .acct h2{margin-bottom:4px;}
+  .acct .who{font-size:16px;margin:2px 0 14px;word-break:break-all;}
+  .acct .state{display:flex;align-items:center;gap:9px;font-size:15px;color:var(--ink-soft);margin-bottom:6px;}
+  .acct .note{font-size:13.5px;color:var(--graphite);font-style:italic;line-height:1.5;margin-top:12px;}
+  .acct .err{font-size:14px;color:#A63A2A;margin-top:12px;line-height:1.45;}
+  .gbtn{display:block;width:100%;padding:12px 16px;border:1px solid var(--rule);border-radius:8px;background:var(--paper);font-family:'Instrument Sans',sans-serif;font-size:14px;color:var(--ink);transition:all .2s;margin-top:6px;}
+  .gbtn:hover{border-color:var(--clay);background:var(--paper-deep);}
+  .gbtn.primary{background:var(--clay);color:var(--bone);border-color:var(--clay);}
+  .gbtn.primary:hover{background:var(--umber);border-color:var(--umber);}
+  .acct .row2{display:flex;gap:10px;margin-top:14px;}
+  .acct .row2 .gbtn{margin-top:0;}
   .confirm-delete h3{font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:8px;}
   .confirm-delete p{font-size:15px;color:var(--ink-soft);margin-bottom:20px;line-height:1.45;}
   .confirm-delete .actions{display:flex;gap:14px;justify-content:flex-end;}
@@ -317,12 +366,20 @@
 
     .lib-inner{padding:30px 18px 80px;}
     .lib-top{flex-wrap:wrap;gap:12px;}
+    .lib-actions{gap:10px 18px;}
+    #wsSync{order:2;}
+    .acct .row2{flex-direction:column;}
     .lib-sub{font-size:16px;margin-bottom:26px;}
     .shelf{grid-template-columns:repeat(2,1fr);gap:30px 18px;}
     .cover .cov-title{font-size:20px;}
 
-    .cover-view{flex-direction:column;align-items:center;gap:28px;padding:26px 18px 90px;}
-    .big-cover{width:214px;}
+    .cover-view{flex-direction:column;align-items:center;justify-content:flex-start;gap:28px;padding:26px 18px calc(90px + env(safe-area-inset-bottom));}
+    .big-cover{width:214px;flex-shrink:0;}
+    .crumb .k{display:none;}
+    /* iPhone notch / home bar: keep content out from under them */
+    .topbar{padding-top:calc(8px + env(safe-area-inset-top));padding-left:calc(12px + env(safe-area-inset-left));padding-right:calc(12px + env(safe-area-inset-right));}
+    .binder,.inspector{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
+    .lib-inner{padding-top:calc(30px + env(safe-area-inset-top));padding-left:calc(18px + env(safe-area-inset-left));padding-right:calc(18px + env(safe-area-inset-right));padding-bottom:calc(80px + env(safe-area-inset-bottom));}
     .cover-panel{width:100%;max-width:440px;}
 
     .ed-scroll{padding:26px 16px 150px;}
@@ -347,16 +404,40 @@
 </head>
 <body>
 
+<script>
+/* =====================================================================
+   FIREBASE SETUP — the ONLY block you ever need to edit.
+   Replace each PASTE_… value with the matching value from Firebase
+   (Project settings → Your apps → Web app → "firebaseConfig").
+   Leave the quotation marks in place. Until you do, the app works
+   exactly as before — on this device only, with no sync.
+   ===================================================================== */
+window.FOLIO_FIREBASE = {
+  apiKey: "AIzaSyDrP2fo_RoshLGKXVAqEabZKBpac5E5ccI",
+  authDomain: "porte-folio-f4590.firebaseapp.com",
+  projectId: "porte-folio-f4590",
+  storageBucket: "porte-folio-f4590.firebasestorage.app",
+  messagingSenderId: "506327238355",
+  appId: "1:506327238355:web:4a6312436a21212eb53626"
+};
+</script>
+
 <div id="threshold"><div class="date" id="thDate"></div><div class="line" id="thLine">The room is quiet.</div><div class="hint">step inside</div></div>
 
 <div id="library" class="hidden">
   <div class="lib-inner">
     <div class="lib-top">
       <div class="wordmark">Folio<em>·</em>OS <span style="font-size:13px;letter-spacing:.16em;color:var(--graphite);">Novel Studio</span></div>
-      <div class="lib-actions"><button class="pencil" onclick="newNovel()">begin a new novel</button><button class="pencil" onclick="exportAll()">archive everything</button></div>
+      <div class="lib-actions">
+        <button class="sync-pill" id="syncPill" onclick="Sync.openAccount()" title="Sync status"><span class="sync-dot"></span><span class="sync-txt">…</span></button>
+        <button class="pencil" onclick="newNovel()">begin a new novel</button>
+        <button class="pencil" onclick="document.getElementById('importFile').click()">import</button>
+        <button class="pencil" onclick="exportAll()">archive everything</button>
+      </div>
     </div>
     <div class="lib-sub" id="libGreeting">Your novels.</div>
     <div class="shelf" id="shelf"></div>
+    <div id="deletedZone"></div>
   </div>
 </div>
 
@@ -365,6 +446,7 @@
     <button class="ticon binder-toggle" id="binderBtn" title="Binder">☰</button>
     <button class="back" onclick="toLibrary()">← the shelf</button>
     <div class="crumb"><span class="k">Novel</span><span class="t" id="wsTitle">—</span></div>
+    <button class="sync-pill mini" id="wsSync" onclick="Sync.openAccount()" title="Sync status"><span class="sync-dot"></span><span class="sync-txt"></span></button>
     <div class="spacer"></div>
     <div class="vtog" id="vtog">
       <button data-view="editor" class="active">Editor</button>
@@ -397,6 +479,8 @@
 </div>
 
 <input type="file" id="coverFile" accept="image/*" class="hidden">
+<input type="file" id="importFile" accept=".json,application/json" class="hidden">
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
@@ -414,8 +498,24 @@ let DB={projects:[]};
 let cur=null;                // current project object
 let view='editor', scriv=false, selId=null, inspectorOn=true;
 
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ console.error('save failed',e); } }
-function load(){ try{ const r=localStorage.getItem(KEY); if(r) DB=JSON.parse(r); }catch(e){ console.error('load failed',e); } if(!DB.projects) DB.projects=[]; }
+function syncConfigured(){ const c=window.FOLIO_FIREBASE||{}; return !!(c.apiKey && c.projectId && !/^PASTE/i.test(c.apiKey) && !/^PASTE/i.test(c.projectId)); }
+function notify(msg,ms){ const t=document.getElementById('toast'); if(!t)return; t.textContent=msg; t.classList.add('show'); clearTimeout(window._toastT); window._toastT=setTimeout(()=>t.classList.remove('show'),ms||4600); }
+// persistLocal writes the whole library to this device. save() = notice any edits (for sync) + persistLocal + nudge sync.
+function persistLocal(){
+  try{ localStorage.setItem(KEY, JSON.stringify(DB)); return true; }
+  catch(e){ console.error('save failed',e);
+    if(!window._warnedStorage){ window._warnedStorage=true; notify('This device has run out of storage space, so your latest changes may not be kept here. Download an archive, or sign in so sync keeps them safe.',9000); }
+    return false; }
+}
+function save(){ try{ Sync.scan(); }catch(e){ console.error('sync scan',e); } persistLocal(); try{ Sync.afterSave(); }catch(e){ console.error('sync after',e); } }
+function load(){
+  try{ const r=localStorage.getItem(KEY); if(r) DB=JSON.parse(r); }
+  catch(e){ console.error('load failed',e); try{ localStorage.setItem(KEY+'_unreadable_'+Date.now(), localStorage.getItem(KEY)); }catch(_){} DB={projects:[]}; }
+  if(!DB||typeof DB!=='object') DB={projects:[]};
+  if(!Array.isArray(DB.projects)) DB.projects=[];
+  if(!Array.isArray(DB.purgeProjects)) DB.purgeProjects=[];
+  DB.projects.forEach(p=>{ if(!Array.isArray(p.binder))p.binder=[]; if(!Array.isArray(p.trash))p.trash=[]; });
+}
 
 function newDoc(name,opts={}){ return Object.assign({id:uid(),type:'doc',name:name||'Untitled',label:'clay',status:'To Do',synopsis:'',notes:'',content:'',keywords:[],target:1500},opts); }
 function newFolder(name,opts={}){ return Object.assign({id:uid(),type:'folder',name:name||'New Folder',label:'umber',open:true,children:[]},opts); }
@@ -456,22 +556,60 @@ function nodeWords(n){ if(n.type==='doc')return words(n.content); return (n.chil
 function manuscriptWords(){ return cur.binder.reduce((s,n)=>s+nodeWords(n),0); }
 
 // ---------------- screens ----------------
+let showDeleted=false;
 function renderLibrary(){
+  const live=DB.projects.filter(p=>!p.deleted), gone=DB.projects.filter(p=>p.deleted);
   const hour=new Date().getHours();
   const greet=hour<12?'Good morning.':hour<18?'Good afternoon.':'Good evening.';
-  document.getElementById('libGreeting').textContent = DB.projects.length? greet+' Your novels.' : 'Every novel begins with a blank cover.';
+  document.getElementById('libGreeting').textContent = live.length? greet+' Your novels.' : 'Every novel begins with a blank cover.';
   const shelf=document.getElementById('shelf'); shelf.innerHTML='';
-  DB.projects.forEach(p=>{
+  live.forEach(p=>{
     const el=document.createElement('div'); el.className='novel';
     el.innerHTML=coverHTML(p,'cover')+
+      '<button class="novel-x" title="Delete this novel" aria-label="Delete '+esc(p.title||'Untitled')+'">✕</button>'+
       '<div class="novel-meta"><div class="nm">'+esc(p.title||'Untitled')+'</div><div class="wc">'+projWords(p).toLocaleString()+' words</div></div>';
-    el.onclick=()=>openProject(p.id);
+    el.onclick=(e)=>{ if(e.target.closest('.novel-x')){ e.stopPropagation(); askDeleteProject(p.id); return; } openProject(p.id); };
     shelf.appendChild(el);
   });
   const add=document.createElement('div'); add.className='novel new-novel';
   add.innerHTML='<div class="cover"><span class="plus">＋</span></div><div class="novel-meta"><div class="nm" style="color:var(--graphite);font-style:italic;">a new novel</div></div>';
   add.onclick=newNovel; shelf.appendChild(add);
+  renderDeletedZone(gone);
+  try{ Sync.updateUI(); }catch(e){}
 }
+function renderDeletedZone(gone){
+  const z=document.getElementById('deletedZone'); if(!z)return;
+  if(!gone.length){ z.innerHTML=''; return; }
+  let h='<div class="rd"><div class="rd-head">Recently deleted · '+gone.length+'<button onclick="toggleDeleted()">'+(showDeleted?'hide':'show')+'</button></div>';
+  if(showDeleted){ gone.forEach(p=>{ h+='<div class="rd-row"><span class="t">'+esc(p.title||'Untitled')+'</span><span class="w">'+projWords(p).toLocaleString()+' words</span><button onclick="restoreProject(\''+esc(p.id)+'\')">restore</button><button class="danger" onclick="askPurgeProject(\''+esc(p.id)+'\')">delete forever</button></div>'; }); }
+  z.innerHTML=h+'</div>';
+}
+function toggleDeleted(){ showDeleted=!showDeleted; renderLibrary(); }
+
+// ---- confirm dialog (one in-room pattern for every destructive action) ----
+function closeConfirm(){ ['delDialog','delVeil'].forEach(id=>{ const e=document.getElementById(id); if(e)e.remove(); }); }
+function confirmBox(o){
+  closeConfirm();
+  const v=document.createElement('div'); v.className='cbox-veil'; v.id='delVeil'; v.onclick=closeConfirm;
+  const d=document.createElement('div'); d.id='delDialog'; d.className='confirm-delete'; d.setAttribute('role','dialog'); d.setAttribute('aria-modal','true');
+  d.innerHTML='<h3></h3><p></p><div class="actions"><button class="cancel"></button><button class="delete"></button></div>';
+  d.querySelector('h3').textContent=o.title; d.querySelector('p').textContent=o.text;
+  const c=d.querySelector('.cancel'), k=d.querySelector('.delete'); c.textContent=o.cancel||'Keep it'; k.textContent=o.ok||'Delete';
+  c.onclick=closeConfirm; k.onclick=()=>{ closeConfirm(); try{ if(o.onOk)o.onOk(); }catch(e){ console.error(e); } };
+  document.body.appendChild(v); document.body.appendChild(d);
+}
+
+// ---- deleting whole novels ----
+function projById(id){ return DB.projects.find(x=>x.id===id)||null; }
+function askDeleteProject(id){ const p=projById(id); if(!p)return;
+  confirmBox({title:'Delete this novel?', text:'“'+(p.title||'Untitled')+'” will move to “Recently deleted” at the bottom of the shelf. You can restore it from there.', ok:'Delete', onOk:()=>deleteProject(id)}); }
+function deleteProject(id){ const p=projById(id); if(!p)return; p.deleted=true; p.deletedAt=Date.now();
+  flushPendingSave(); const wasOpen=(cur===p); if(wasOpen) cur=null; save(); if(wasOpen) show('library'); renderLibrary(); notify('Moved to “Recently deleted”.'); }
+function restoreProject(id){ const p=projById(id); if(!p)return; p.deleted=false; delete p.deletedAt; save(); renderLibrary(); }
+function askPurgeProject(id){ const p=projById(id); if(!p)return;
+  confirmBox({title:'Delete forever?', text:'“'+(p.title||'Untitled')+'” and everything in it will be erased from this device and from the cloud. This cannot be undone.', ok:'Delete forever', onOk:()=>purgeProject(id)}); }
+function purgeProject(id){ const i=DB.projects.findIndex(x=>x.id===id); if(i<0)return; const [p]=DB.projects.splice(i,1);
+  try{ Sync.notePurgeProject(p); }catch(e){ console.error(e); } save(); renderLibrary(); }
 function projWords(p){ return p.binder.reduce((s,n)=>s+nodeWords(n),0); }
 function coverHTML(p,cls){
   const c=p.cover||{mode:'type',cloth:'clay'};
@@ -485,9 +623,9 @@ function coverHTML(p,cls){
 }
 function shade(hex,amt){ const n=parseInt(hex.slice(1),16); let r=(n>>16)+amt,g=((n>>8)&255)+amt,b=(n&255)+amt; r=Math.max(0,Math.min(255,r));g=Math.max(0,Math.min(255,g));b=Math.max(0,Math.min(255,b)); return '#'+(r<<16|g<<8|b).toString(16).padStart(6,'0'); }
 
-function openProject(id){ cur=DB.projects.find(p=>p.id===id); if(!cur)return; if(!cur.trash)cur.trash=[]; selId=firstDoc(cur.binder); view='editor'; scriv=false; closeDrawers(); show('workspace'); renderWorkspace(); }
+function openProject(id){ const p=DB.projects.find(p=>p.id===id); if(!p||p.deleted)return; cur=p; if(!cur.trash)cur.trash=[]; selId=firstDoc(cur.binder); view='editor'; scriv=false; closeDrawers(); show('workspace'); renderWorkspace(); }
 function firstDoc(nodes){ for(const n of nodes){ if(n.type==='doc')return n.id; if(n.children){const f=firstDoc(n.children); if(f)return f;} } return nodes[0]?nodes[0].id:null; }
-function toLibrary(){ save(); show('library'); renderLibrary(); }
+function toLibrary(){ flushPendingSave(); save(); show('library'); renderLibrary(); }
 function show(which){ ['threshold','library','workspace'].forEach(s=>document.getElementById(s).classList.toggle('hidden', s!==which)); }
 
 function newNovel(){
@@ -544,7 +682,7 @@ function coverThumb(p){
 function renderTrash(){
   const z=document.getElementById('trashZone');
   if(!cur.trash||!cur.trash.length){ z.innerHTML=''; return; }
-  let h='<div class="trash-head"><span>Trash · '+cur.trash.length+'</span><button onclick="emptyTrash()">empty</button></div>';
+  let h='<div class="trash-head"><span>Trash · '+cur.trash.length+'</span><button onclick="askEmptyTrash()">empty</button></div>';
   cur.trash.forEach(n=>{
     h+='<div class="row" style="padding-left:12px;opacity:.75"><span class="ic">'+(n.type==='folder'?'▤':'▢')+'</span><span class="nm">'+esc(n.name)+'</span>'+
        '<span class="mv" style="display:flex"><button title="restore" onclick="restoreNode(\''+n.id+'\')">↩</button></span></div>';
@@ -580,19 +718,18 @@ function deleteNode(id){
 function restoreNode(id){
   const i=cur.trash.findIndex(n=>n.id===id); if(i<0)return; const [x]=cur.trash.splice(i,1); cur.binder.push(x); save(); renderWorkspace();
 }
-function emptyTrash(){ cur.trash=[]; save(); renderBinder(); }
-function confirmDelete(n){
-  const old=document.getElementById('delDialog'); if(old)old.remove();
-  const d=document.createElement('div'); d.id='delDialog'; d.className='confirm-delete';
-  const isF=n.type==='folder'; const word=isF?'folder':'document';
-  d.innerHTML='<h3>Delete this '+word+'?</h3><p>'+esc(n.name)+(isF?' and all its contents':'')+' will be moved to trash.</p>'+
-    '<div class="actions"><button class="cancel" onclick="document.getElementById(\'delDialog\').remove();">Keep it</button>'+
-    '<button class="delete" onclick="reallyDelete(\''+n.id+'\')">Delete</button></div>';
-  const x=window.innerWidth/2-180, y=window.innerHeight/2-100;
-  d.style.left=x+'px'; d.style.top=y+'px';
-  document.body.appendChild(d);
+function askEmptyTrash(){ if(!cur||!cur.trash||!cur.trash.length)return;
+  confirmBox({title:'Empty the trash?', text:'Everything in the trash will be erased for good — on this device and on every device you sync. This cannot be undone.', ok:'Empty trash', onOk:emptyTrash}); }
+function emptyTrash(){
+  const ids=[]; (function grab(ns){ (ns||[]).forEach(n=>{ if(n.type==='doc'){ if((n.pu||0)>0) ids.push(n.id); } else grab(n.children); }); })(cur.trash);
+  try{ Sync.notePurgeNodes(cur,ids); }catch(e){ console.error(e); }
+  cur.trash=[]; save(); renderBinder();
 }
-function reallyDelete(id){ deleteNode(id); const d=document.getElementById('delDialog'); if(d)d.remove(); }
+function confirmDelete(n){
+  const isF=n.type==='folder';
+  confirmBox({title:'Delete this '+(isF?'folder':'document')+'?', text:'“'+n.name+'”'+(isF?' and everything inside it':'')+' will move to the trash. You can restore it from there.', ok:'Delete', onOk:()=>deleteNode(n.id)});
+}
+function reallyDelete(id){ closeConfirm(); deleteNode(id); }
 
 // ---- drag reorder (same-level or into folder) ----
 let dragId=null;
@@ -632,7 +769,7 @@ function renderCover(){
       (cv.mode==='type'
         ? '<label>Cloth</label><div class="cloth-row">'+Object.keys(PIG).filter(k=>k!=='graphite').map(k=>'<div class="cloth-dot'+(cv.cloth===k?' on':'')+'" style="background:'+PIG[k]+'" onclick="setCloth(\''+k+'\')"></div>').join('')+'</div>'
         : '<span class="upload-btn" onclick="document.getElementById(\'coverFile\').click()">'+(cv.image?'replace image…':'upload an image…')+'</span>'+(cv.image?'<div class="cover-note">Title and author sit over the photograph.</div>':'<div class="cover-note">A cover you already have — a painting, a photograph.</div>'))+
-      '</div></div></div>';
+      '</div><button class="danger-link" onclick="askDeleteProject(\''+esc(cur.id)+'\')">Delete this novel…</button></div></div>';
   const bind=(id,prop)=>{ const el=document.getElementById(id); if(!el)return; el.oninput=()=>{ cur[prop]=el.value; document.getElementById('wsTitle').textContent=cur.title||'Untitled'; refreshBigCover(); save(); }; };
   bind('cvTitle','title'); bind('cvAuthor','author'); bind('cvSub','subtitle');
 }
@@ -649,9 +786,28 @@ function refreshBigCover(){ const s=document.querySelector('.cover-stage'); if(s
 function openCover(){ view='cover'; if(isMobile())closeBinder(); renderWorkspace(); }
 function setCoverMode(m){ cur.cover.mode=m; save(); renderCover(); }
 function setCloth(k){ cur.cover.cloth=k; save(); refreshBigCover(); renderCover(); }
+// Covers are shrunk before they are stored: a phone photo can be 5 MB+, which would swamp both this device's storage and the cloud.
+function shrinkImage(dataUrl,maxSide,quality,cb){
+  const img=new Image();
+  img.onload=()=>{ try{
+      let w=img.width,h=img.height; const s=Math.min(1,maxSide/Math.max(w,h)); w=Math.max(1,Math.round(w*s)); h=Math.max(1,Math.round(h*s));
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const cx=cv.getContext('2d'); cx.fillStyle='#ffffff'; cx.fillRect(0,0,w,h); cx.drawImage(img,0,0,w,h);
+      cb(cv.toDataURL('image/jpeg',quality)); }catch(e){ cb(null); } };
+  img.onerror=()=>cb(null); img.src=dataUrl;
+}
 document.getElementById('coverFile').addEventListener('change',function(){
   const f=this.files&&this.files[0]; if(!f)return; const rd=new FileReader();
-  rd.onload=()=>{ cur.cover.image=rd.result; cur.cover.mode='image'; save(); renderCover(); }; rd.readAsDataURL(f); this.value='';
+  rd.onload=()=>{
+    shrinkImage(rd.result,1000,0.82,out=>{
+      if(out && out.length>600000) return shrinkImage(rd.result,700,0.7,out2=>finish(out2));
+      finish(out);
+    });
+    function finish(out){
+      if(!out||out.length>650000){ notify('That image couldn’t be used. Try a smaller JPEG or PNG.'); return; }
+      cur.cover.image=out; cur.cover.mode='image'; save(); renderCover();
+    }
+  };
+  rd.readAsDataURL(f); this.value='';
 });
 
 function renderEditor(){
@@ -679,15 +835,23 @@ function renderEditor(){
   c.innerHTML=h;
   const singleDoc = !stitched;
   if(singleDoc){
-    const te=c.querySelector('[data-title]'); if(te) te.oninput=()=>{ const n=findNode(te.dataset.title); n.name=te.innerText.trim()||'Untitled'; clearTimeout(window._t); window._t=setTimeout(()=>{save();renderBinder();},600); };
+    const te=c.querySelector('[data-title]'); if(te) te.oninput=()=>{ const n=findNode(te.dataset.title); n.name=te.innerText.trim()||'Untitled'; queueSave(()=>{save();renderBinder();},600); };
   }
   c.querySelectorAll('[data-doc]').forEach(ed=>{
     ed.oninput=()=>{ const n=findNode(ed.dataset.doc); if(!n)return; n.content=ed.innerHTML;
       const wc=ed.closest('.sheet').querySelector('[data-wc]'); if(wc && singleDoc) wc.textContent=words(n.content).toLocaleString();
-      clearTimeout(window._save); window._save=setTimeout(()=>{ save(); showKept(); document.getElementById('binderTotal').textContent=manuscriptWords().toLocaleString()+' words'; },700);
+      queueSave(()=>{ save(); showKept(); const bt=document.getElementById('binderTotal'); if(bt&&cur) bt.textContent=manuscriptWords().toLocaleString()+' words'; },700);
     };
+    ed.addEventListener('blur',()=>{ flushPendingSave(); try{ Sync.releaseHeld(); }catch(e){} });
   });
 }
+// Debounced saves, with a guaranteed flush when the page is hidden (phones freeze background tabs — a pending timer would never fire).
+let pendingSaveFn=null;
+function queueSave(fn,ms){ pendingSaveFn=fn; clearTimeout(window._save); window._save=setTimeout(()=>{ const f=pendingSaveFn; pendingSaveFn=null; if(f)f(); },ms); }
+function flushPendingSave(){ clearTimeout(window._save); const f=pendingSaveFn; pendingSaveFn=null; if(f){ try{ f(); }catch(e){ console.error(e); } } }
+function dropPendingSave(){ clearTimeout(window._save); pendingSaveFn=null; }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') flushPendingSave(); });
+window.addEventListener('pagehide',flushPendingSave);
 function showKept(){ const k=document.getElementById('kept'); if(!k)return; const t=new Date(); k.textContent='kept · '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0'); k.classList.add('show'); clearTimeout(window._k); window._k=setTimeout(()=>k.classList.remove('show'),2400); }
 function scrivDocs(){ const sel=findNode(selId); let folder=null; if(sel&&sel.type==='folder')folder=sel; else{ const l=locate(selId); folder=l?l.parent:null; } const src=folder?folder.children:cur.binder; return (src||[]).filter(x=>x.type==='doc'); }
 
@@ -717,7 +881,7 @@ function renderCork(){
     card.addEventListener('dblclick',()=>{ selId=id; view='editor'; renderWorkspace(); });
   });
 }
-function deb(fn){ clearTimeout(window._d); window._d=setTimeout(fn,600); }
+function deb(fn){ queueSave(fn,600); }
 
 function renderOutliner(){
   const c=document.getElementById('center');
@@ -794,7 +958,44 @@ document.getElementById('binderBtn').addEventListener('click',()=>{ document.bod
 document.getElementById('drawerScrim').addEventListener('click',closeDrawers);
 
 // ---------------- export ----------------
-function exportAll(){ const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='folio-novels-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); }
+function exportAll(){ flushPendingSave(); const blob=new Blob([JSON.stringify({projects:DB.projects},null,2)],{type:'application/json'}); trigger('folio-novels-'+new Date().toISOString().slice(0,10)+'.json',blob); }
+
+// ---- import: bring in an archive made by "archive everything" (from any earlier version, on any device) ----
+// Nothing is ever overwritten: a novel whose id already exists arrives as a separate copy.
+function safeId(s){ return (typeof s==='string' && /^[A-Za-z0-9_-]{1,64}$/.test(s)) ? s : null; }
+function reIdNodes(nodes,seen){ (nodes||[]).forEach(n=>{ if(!n||typeof n!=='object')return; n.id=uid(); if(Array.isArray(n.children)) reIdNodes(n.children); }); }
+function cleanNodes(nodes){
+  return (Array.isArray(nodes)?nodes:[]).filter(n=>n&&typeof n==='object'&&(n.type==='doc'||n.type==='folder')).map(n=>{
+    n.id=safeId(n.id)||uid(); delete n.cu; delete n.pu; n.name=String(n.name==null?'Untitled':n.name);
+    if(n.type==='folder'){ n.children=cleanNodes(n.children); if(n.open===undefined)n.open=true; }
+    else { n.content=typeof n.content==='string'?n.content:''; n.keywords=Array.isArray(n.keywords)?n.keywords.map(String):[]; delete n.children; }
+    return n; });
+}
+function importProjects(data){
+  const list=Array.isArray(data)?data:(data&&Array.isArray(data.projects)?data.projects:null);
+  if(!list) throw new Error('no projects');
+  let added=0;
+  list.forEach(src=>{
+    if(!src||typeof src!=='object'||!Array.isArray(src.binder)) return;
+    const p=JSON.parse(JSON.stringify(src));
+    ['tu','pushedTu','purge','deleted','deletedAt'].forEach(k=>delete p[k]);
+    p.binder=cleanNodes(p.binder); p.trash=cleanNodes(p.trash);
+    p.title=String(p.title==null?'Untitled':p.title); p.author=String(p.author==null?'':p.author); p.subtitle=String(p.subtitle==null?'':p.subtitle);
+    p.cover=(p.cover&&typeof p.cover==='object')?p.cover:{mode:'type',cloth:'clay',image:null};
+    if(!p.createdAt) p.createdAt=Date.now();
+    const sid=safeId(p.id);
+    if(!sid || DB.projects.some(x=>x.id===sid)){ p.id=uid(); reIdNodes(p.binder); reIdNodes(p.trash); if(sid) p.title=p.title+' (imported)'; } else p.id=sid;
+    DB.projects.push(p); added++;
+  });
+  if(!added) throw new Error('no novels found');
+  return added;
+}
+document.getElementById('importFile').addEventListener('change',function(){
+  const f=this.files&&this.files[0]; if(!f)return; const rd=new FileReader();
+  rd.onload=()=>{ try{ const n=importProjects(JSON.parse(rd.result)); save(); renderLibrary(); notify(n+' novel'+(n===1?'':'s')+' imported.'); }
+    catch(e){ console.error(e); notify('That file doesn’t look like a Novel Studio archive, so nothing was changed.'); } };
+  rd.readAsText(f); this.value='';
+});
 
 // ================= COMPILE / EXPORT =================
 let compileFmt='pdf';
@@ -1007,22 +1208,370 @@ function downloadBytes(name,bytes,mime){ trigger(name,new Blob([bytes],{type:mim
 function trigger(name,blob){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },100); }
 function slug(s){ return (s||'novel').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'novel'; }
 
+// ================= SYNC (Firebase Auth + Firestore) =================
+// Design, in plain words:
+//  • This device's copy (localStorage) is always the working copy. The app never waits on the network to let you write.
+//  • Every document is its own record in the cloud (a long novel would not fit in one), and each novel has one small
+//    "structure" record (titles, order, folders, cover). Newest edit wins, per document and per structure.
+//  • Nothing is deleted by a sync: a page that can't be placed lands in a "Recovered" folder instead.
+//  • Each document remembers when it was last edited (cu) and last uploaded (pu); edited-but-not-uploaded = "waiting to sync".
+const Sync=(function(){
+  const CFG=window.FOLIO_FIREBASE||{};
+  const configured=syncConfigured();
+  const isFile=(location.protocol==='file:');
+  const UIDKEY='folioNS_uid_v1';
+  const S={configured,isFile,loaded:false,loadFailed:false,authKnown:false,fb:null,app:null,auth:null,db:null,user:null,
+    metaUnsub:null,docUnsubs:{},metaReady:false,docsReady:{},orphans:{},sigT:{},sigC:{},held:{},
+    flushing:false,again:false,flushTimer:null,lastSync:0,error:'',authError:'',dismissed:false,refreshT:null};
+
+  const now=()=>Date.now();
+  const bump=(prev)=>{ const t=now(); return t>(prev||0)?t:(prev||0)+1; };
+  function eachDoc(p,fn){ const f=(ns)=>{ for(const n of (ns||[])){ if(n.type==='folder') f(n.children); else fn(n); } }; f(p.binder); f(p.trash); }
+  function eachNode(p,fn){ const f=(ns)=>{ for(const n of (ns||[])){ fn(n); if(n.children) f(n.children); } }; f(p.binder); f(p.trash); }
+  function findDocNode(p,id){ let r=null; eachDoc(p,n=>{ if(n.id===id) r=n; }); return r; }
+  function strip(ns){ return (ns||[]).map(n=>{ const o={id:n.id,type:n.type,name:n.name,label:n.label};
+    if(n.type==='folder') o.children=strip(n.children);
+    else { o.status=n.status; o.synopsis=n.synopsis; o.notes=n.notes; o.keywords=n.keywords||[]; o.target=n.target; }
+    return o; }); }
+  function structure(p){ const c=p.cover||{}; return {t:p.title||'',a:p.author||'',s:p.subtitle||'',k:p.kind||'',cm:c.mode||'',cl:c.cloth||'',ci:c.image||'',d:!!p.deleted,b:strip(p.binder),r:strip(p.trash)}; }
+  const structSig=(p)=>JSON.stringify(structure(p));
+
+  // Notice edits. Called from save(), before the library is written to this device.
+  function scan(){
+    if(!configured||!DB||!Array.isArray(DB.projects)) return false;
+    let changed=false;
+    DB.projects.forEach(p=>{
+      const ts=structSig(p);
+      if(!(p.id in S.sigT)){ S.sigT[p.id]=ts; if(p.tu===undefined){ p.tu=bump(0); p.pushedTu=0; changed=true; } }
+      else if(S.sigT[p.id]!==ts){ S.sigT[p.id]=ts; p.tu=bump(p.tu); changed=true; }
+      eachDoc(p,n=>{ const k=p.id+'/'+n.id, c=n.content||'';
+        if(!(k in S.sigC)){ S.sigC[k]=c; if(n.cu===undefined){ n.cu=bump(0); n.pu=0; changed=true; } }
+        else if(S.sigC[k]!==c){ S.sigC[k]=c; n.cu=bump(n.cu); changed=true; } });
+    });
+    return changed;
+  }
+  function dirtyCount(){
+    let c=(DB.purgeProjects||[]).length;
+    DB.projects.forEach(p=>{ if((p.tu||0)>(p.pushedTu||0)) c++; c+=(p.purge||[]).length; eachDoc(p,n=>{ if((n.cu||0)>(n.pu||0)) c++; }); });
+    return c;
+  }
+  const allDocsReady=()=>DB.projects.every(p=>S.docsReady[p.id]);
+
+  // ---------- status + UI ----------
+  function clock(t){ const d=new Date(t); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  function status(){
+    if(!configured) return {k:'off',t:'sync not set up'};
+    if(isFile) return {k:'off',t:'open the web address to sync'};
+    if(!S.loaded) return S.loadFailed?{k:'off',t:'sync unavailable right now'}:{k:'wait',t:'connecting…'};
+    if(!S.authKnown) return {k:'wait',t:'connecting…'};
+    if(!S.user) return {k:'off',t:'sign in to sync'};
+    if(S.error) return {k:'err',t:'sync problem — tap for details'};
+    if(typeof navigator!=='undefined' && navigator.onLine===false) return {k:'off',t:'offline — kept on this device'};
+    if(!S.metaReady||!allDocsReady()||S.flushing||dirtyCount()>0) return {k:'wait',t:'syncing…'};
+    return {k:'ok',t:'synced · '+clock(S.lastSync||now())};
+  }
+  function updateUI(){
+    const st=status();
+    ['syncPill','wsSync'].forEach(id=>{ const el=document.getElementById(id); if(!el)return; el.setAttribute('data-k',st.k); el.title='Sync: '+st.t; const tx=el.querySelector('.sync-txt'); if(tx) tx.textContent=st.t; });
+    if(document.getElementById('acctModal')) renderAccount();
+  }
+  function friendly(e){
+    const c=(e&&e.code)||'', m=(e&&e.message)||String(e||'');
+    if(c==='permission-denied'||/Missing or insufficient permissions/i.test(m)) return 'The cloud refused the request. Check that the Firestore rules were published and that you are signed in.';
+    if(c==='resource-exhausted') return 'The free daily limit for the cloud was reached. It resets each day; your writing is safe on this device.';
+    if(c==='unavailable'||c==='deadline-exceeded'||/timeout/i.test(m)) return 'Couldn’t reach the cloud just now. Your writing is safe on this device and will sync when the connection returns.';
+    if(c==='auth/unauthorized-domain') return 'This web address isn’t on Firebase’s authorized list yet (Firebase → Authentication → Settings → Authorized domains).';
+    if(c==='auth/operation-not-allowed') return 'Google sign-in isn’t switched on in Firebase yet (Authentication → Sign-in method → Google).';
+    if(c==='auth/admin-restricted-operation') return 'New sign-ups are switched off for this project. Sign in with the Google account you first used.';
+    if(c==='auth/network-request-failed') return 'No connection — try again when you’re online.';
+    if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request'||c==='auth/user-cancelled') return '';
+    if(c==='auth/popup-blocked') return 'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.';
+    if(c==='auth/operation-not-supported-in-this-environment') return 'Sign-in doesn’t work when the page is opened as a file. Use the app’s web address instead.';
+    return 'Sync problem: '+(c||m);
+  }
+
+  // ---------- account sheet ----------
+  function libraryVisible(){ const l=document.getElementById('library'); return !!l && !l.classList.contains('hidden'); }
+  function closeAccount(){ const v=document.getElementById('acctVeil'); if(v){ v.classList.remove('show'); setTimeout(()=>v.remove(),240); } }
+  function openAccount(){
+    if(document.getElementById('acctVeil')){ renderAccount(); return; }
+    const v=document.createElement('div'); v.className='veil'; v.id='acctVeil'; v.innerHTML='<div class="modal acct" id="acctModal" role="dialog" aria-modal="true"></div>';
+    document.body.appendChild(v); requestAnimationFrame(()=>v.classList.add('show'));
+    v.addEventListener('click',e=>{ if(e.target===v) closeAccount(); });
+    renderAccount();
+  }
+  function renderAccount(){
+    const m=document.getElementById('acctModal'); if(!m) return;
+    const st=status(); let h='<h2>Sync</h2>';
+    const close='<div class="row2"><button class="gbtn" onclick="Sync.closeAccount()">Close</button></div>';
+    if(!configured) h+='<div class="sub">Not connected yet.</div><div class="note">Your writing is kept on this device only. To use your novels on your phone and computer, finish the Firebase setup (see the setup guide), then reload.</div>'+close;
+    else if(isFile) h+='<div class="sub">Open the web address.</div><div class="note">Sync can’t run from a file opened off your computer. Open the app at its web address (it ends in .web.app or .firebaseapp.com) and sign in there.</div>'+close;
+    else if(!S.loaded) h+='<div class="sub">'+(S.loadFailed?'Couldn’t reach Firebase.':'Connecting…')+'</div><div class="note">'+(S.loadFailed?'You may be offline. Your writing is safe on this device; reload when you’re back online.':'One moment.')+'</div>'+close;
+    else if(!S.user) h+='<div class="sub">Keep your novels on every device.</div><button class="gbtn primary" onclick="Sync.signIn()">Continue with Google</button>'+(S.authError?'<div class="err">'+esc(S.authError)+'</div>':'')+'<div class="note">Use the same Google account on each device. Your writing also stays on this device, so you can keep writing offline.</div><div class="row2"><button class="gbtn" onclick="Sync.dismiss()">Not now</button></div>';
+    else h+='<div class="sub">Signed in</div><div class="who">'+esc(S.user.email||S.user.displayName||S.user.uid)+'</div>'+
+      '<div class="state"><span class="sync-pill" data-k="'+st.k+'" style="padding:0;border:0;background:none"><span class="sync-dot"></span></span> '+esc(st.t)+'</div>'+
+      (S.error?'<div class="err">'+esc(S.error)+'</div>':'')+
+      '<div class="row2"><button class="gbtn primary" onclick="Sync.syncNowBtn()">Sync now</button><button class="gbtn" onclick="Sync.signOutBtn()">Sign out</button></div>'+
+      '<div class="note">Signing out keeps this device’s copy; only the cloud connection stops.</div>'+close;
+    m.innerHTML=h;
+  }
+  function dismiss(){ S.dismissed=true; closeAccount(); }
+  function maybePrompt(){ if(configured&&!isFile&&S.loaded&&S.authKnown&&!S.user&&!S.dismissed&&libraryVisible()) openAccount(); }
+  async function signIn(){
+    if(!S.loaded) return; S.authError=''; renderAccount();
+    const A=S.fb.A; const provider=new A.GoogleAuthProvider(); try{ provider.setCustomParameters({prompt:'select_account'}); }catch(e){}
+    try{ await A.signInWithPopup(S.auth,provider); }
+    catch(e){
+      const c=e&&e.code;
+      if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'||c==='auth/web-storage-unsupported'){
+        try{ try{ sessionStorage.setItem('folioNS_redirect','1'); }catch(_){} await A.signInWithRedirect(S.auth,provider); return; }catch(e2){ e=e2; } }
+      S.authError=friendly(e); renderAccount(); updateUI(); }
+  }
+  async function signOutBtn(){ try{ await S.fb.A.signOut(S.auth); }catch(e){ S.error=friendly(e); } S.dismissed=true; closeAccount(); updateUI(); }
+  async function syncNowBtn(){ S.error=''; await flushNow(); updateUI(); }
+
+  // ---------- connecting ----------
+  const canLoad=()=>configured&&!isFile;
+  function loadFailedFn(e){ S.loadFailed=true; updateUI(); }
+  function attach(m){
+    try{
+      const A=m.authM,F=m.fsM; S.fb={A,F};
+      S.app=m.appM.initializeApp(CFG); S.auth=A.getAuth(S.app); S.db=F.getFirestore(S.app); S.loaded=true;
+      let wasRedirect=false; try{ wasRedirect=sessionStorage.getItem('folioNS_redirect')==='1'; sessionStorage.removeItem('folioNS_redirect'); }catch(_){}
+      if(wasRedirect) A.getRedirectResult(S.auth).catch(e=>{ S.authError=friendly(e); updateUI(); });
+      A.onAuthStateChanged(S.auth,onUser,e=>{ S.authError=friendly(e); S.authKnown=true; updateUI(); });
+    }catch(e){ console.error('firebase attach',e); S.loadFailed=true; }
+    updateUI();
+  }
+  function onUser(user){
+    S.authKnown=true; S.user=user||null; S.error='';
+    if(!user){ stopListeners(); updateUI(); maybePrompt(); return; }
+    let prev=null; try{ prev=localStorage.getItem(UIDKEY); }catch(e){}
+    if(prev && prev!==user.uid) stashAndReset(prev);
+    try{ localStorage.setItem(UIDKEY,user.uid); }catch(e){}
+    scan(); persistLocal();
+    startListeners(); closeAccount(); updateUI();
+  }
+  // A different Google account signed in on a device that holds someone else's writing: never mix them.
+  function stashAndReset(prevUid){
+    try{ localStorage.setItem(KEY+'_stash_'+prevUid,JSON.stringify(DB)); }catch(e){}
+    stopListeners(); DB={projects:[],purgeProjects:[]}; cur=null; dropPendingSave(); S.sigT={}; S.sigC={}; persistLocal();
+    show('library'); renderLibrary();
+    notify('This device was holding writing from a different account. It has been put aside as a backup, and your own library will load.',9000);
+  }
+
+  // ---------- listening (cloud → device) ----------
+  function stopListeners(){
+    if(S.metaUnsub){ try{S.metaUnsub();}catch(e){} S.metaUnsub=null; }
+    Object.keys(S.docUnsubs).forEach(k=>{ try{S.docUnsubs[k]();}catch(e){} }); S.docUnsubs={};
+    S.metaReady=false; S.docsReady={}; S.orphans={}; S.held={};
+    clearTimeout(S.flushTimer);
+  }
+  function startListeners(){
+    stopListeners(); const F=S.fb.F, uid=S.user.uid;
+    S.metaUnsub=F.onSnapshot(F.collection(S.db,'users',uid,'projects'),{includeMetadataChanges:true},snap=>{
+      let changed=false;
+      snap.docChanges().forEach(ch=>{
+        if(ch.type==='removed'||ch.doc.metadata.hasPendingWrites) return;
+        const d=ch.doc.data(); if(applyMeta(ch.doc.id,d)) changed=true;
+        if(d&&!d.purged) attachDocs(ch.doc.id);
+      });
+      if(!snap.metadata.fromCache&&!S.metaReady){ S.metaReady=true; DB.projects.forEach(p=>attachDocs(p.id)); }
+      if(changed) afterApply(); updateUI(); scheduleFlush(400);
+    },err=>fail(err));
+  }
+  function attachDocs(pid){
+    if(S.docUnsubs[pid]||!S.user) return; const F=S.fb.F;
+    S.docUnsubs[pid]=F.onSnapshot(F.collection(S.db,'users',S.user.uid,'projects',pid,'docs'),{includeMetadataChanges:true},snap=>{
+      let changed=false;
+      snap.docChanges().forEach(ch=>{ if(ch.type==='removed'||ch.doc.metadata.hasPendingWrites) return; if(applyDoc(pid,ch.doc.id,ch.doc.data())) changed=true; });
+      if(!snap.metadata.fromCache&&!S.docsReady[pid]&&S.metaReady){ S.docsReady[pid]=true; if(recoverOrphans(pid)) changed=true; if(!S.lastSync) S.lastSync=now(); }
+      if(changed) afterApply(); updateUI(); scheduleFlush(400);
+    },err=>fail(err));
+  }
+  function fail(err){ console.error('sync listener',err); S.error=friendly(err); updateUI(); }
+
+  // A project's structure arrives from the cloud. Newest structure wins; page text and open/closed folders stay as they are here.
+  function applyMeta(pid,d){
+    if(!d) return false;
+    let p=DB.projects.find(x=>x.id===pid);
+    if(d.purged){ if(p){ removeLocalProject(p); return true; } return false; }
+    let created=false;
+    if(!p){ p={id:pid,title:'',author:'',subtitle:'',kind:'Novel',cover:{mode:'type',image:null,cloth:'indigo'},createdAt:d.createdAt||now(),trash:[],binder:[],tu:0,pushedTu:0}; DB.projects.push(p); created=true; }
+    const remoteAt=d.treeAt||0;
+    if(!created && remoteAt<=(p.tu||0)){ if(remoteAt===(p.tu||0)) p.pushedTu=Math.max(p.pushedTu||0,p.tu||0); return false; }
+    let tree; try{ tree=JSON.parse(d.tree||'{}'); }catch(e){ console.error('unreadable structure',e); if(created) removeLocalProject(p); return false; }
+    const local=new Map(); eachNode(p,n=>local.set(n.id,n));
+    const rebuild=(ns)=>(Array.isArray(ns)?ns:[]).map(rn=>{
+      const ln=local.get(rn.id), n=Object.assign({},rn);
+      if(rn.type==='folder'){ n.children=rebuild(rn.children); n.open=(ln&&ln.type==='folder'&&ln.open!==undefined)?ln.open:true; }
+      else { const same=ln&&ln.type==='doc'; n.content=same?(ln.content||''):''; n.cu=same?(ln.cu||0):0; n.pu=same?(ln.pu||0):0; n.keywords=Array.isArray(rn.keywords)?rn.keywords:[]; }
+      return n; });
+    const binder=rebuild(tree.binder), trash=rebuild(tree.trash);
+    const keep=new Set(); (function mark(ns){ ns.forEach(n=>{ keep.add(n.id); if(n.children) mark(n.children); }); })(binder.concat(trash));
+    const rescue=[]; local.forEach(n=>{ if(n.type==='doc'&&!keep.has(n.id)&&(n.cu||0)>(n.pu||0)&&(n.content||'').trim()) rescue.push(n); });
+    const rc=d.cover||{}, lc=p.cover||{};
+    p.title=d.title||''; p.author=d.author||''; p.subtitle=d.subtitle||''; p.kind=d.kind||'Novel'; if(d.createdAt) p.createdAt=d.createdAt;
+    p.cover={mode:rc.mode||'type',cloth:rc.cloth||'clay',image:rc.image||((rc.mode==='image'&&lc.mode==='image')?(lc.image||null):null)};
+    p.deleted=!!d.deleted; if(!p.deleted) delete p.deletedAt;
+    p.binder=binder; p.trash=trash; p.tu=remoteAt; p.pushedTu=remoteAt;
+    eachDoc(p,n=>{ const k=pid+'/'+n.id; S.sigC[k]=n.content||''; });
+    if(rescue.length) rescueInto(p,rescue); else S.sigT[pid]=structSig(p);
+    // A new page's text can reach us a moment BEFORE the structure that introduces it (text is uploaded first). Pick it up now.
+    const waiting=S.orphans[pid]; if(waiting) Object.keys(waiting).forEach(id=>{ if(findDocNode(p,id)){ const d=waiting[id]; delete waiting[id]; applyDoc(pid,id,d); } });
+    return true;
+  }
+  // One page of text arrives. Newest edit wins; a page you are typing in right now is never overwritten.
+  function applyDoc(pid,id,d){
+    const p=DB.projects.find(x=>x.id===pid); if(!p||!d) return false;
+    const n=findDocNode(p,id);
+    if(!n){ (S.orphans[pid]=S.orphans[pid]||{})[id]=d; return false; }
+    const at=d.at||0, cu=n.cu||0;
+    if(at<cu) return false;
+    if(at===cu){ n.pu=Math.max(n.pu||0,cu); return false; }
+    if(isEditingDoc(id)){ S.held[pid+'/'+id]={pid,id,d}; return false; }
+    n.content=d.content||''; n.cu=at; n.pu=at; S.sigC[pid+'/'+id]=n.content; return true;
+  }
+  function isEditingDoc(id){ const ae=document.activeElement; if(!ae||!ae.closest) return false; const el=ae.closest('[data-doc]'); return !!el&&el.getAttribute('data-doc')===id; }
+  function releaseHeld(){
+    let changed=false;
+    Object.keys(S.held).forEach(k=>{ const h=S.held[k]; if(isEditingDoc(h.id)) return; delete S.held[k]; if(applyDoc(h.pid,h.id,h.d)) changed=true; });
+    if(changed) afterApply();
+  }
+  // Pages that exist in the cloud but belong to no folder (left behind by two devices re-arranging at once) are gathered, not lost.
+  function recoverOrphans(pid){
+    const orph=S.orphans[pid]; delete S.orphans[pid]; if(!orph) return false;
+    const p=DB.projects.find(x=>x.id===pid); if(!p) return false;
+    const cutoff=now()-180000, rescue=[];
+    Object.keys(orph).forEach(id=>{ const d=orph[id]; if(findDocNode(p,id)) return; if(!(d.content||'').trim()) return; if((d.pa||d.at||0)>cutoff) return;
+      const snippet=String(d.content).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,32)||'Recovered page';
+      rescue.push({id,type:'doc',name:snippet,label:'ochre',status:'To Do',synopsis:'Recovered after a sync.',notes:'',keywords:[],target:1500,content:d.content,cu:d.at||0,pu:d.at||0}); });
+    if(!rescue.length) return false; rescueInto(p,rescue); return true;
+  }
+  function rescueInto(p,nodes){
+    let f=p.binder.find(n=>n.type==='folder'&&n.id==='recovered');
+    if(!f){ f={id:'recovered',type:'folder',name:'Recovered',label:'ochre',open:true,children:[]}; p.binder.push(f); }
+    nodes.forEach(n=>{ f.children.push(n); S.sigC[p.id+'/'+n.id]=n.content||''; });
+    p.tu=bump(p.tu); S.sigT[p.id]=structSig(p);
+  }
+  function removeLocalProject(p){
+    const i=DB.projects.indexOf(p); if(i>=0) DB.projects.splice(i,1);
+    const u=S.docUnsubs[p.id]; if(u){ try{u();}catch(e){} delete S.docUnsubs[p.id]; }
+    delete S.sigT[p.id]; delete S.docsReady[p.id]; delete S.orphans[p.id];
+    Object.keys(S.sigC).forEach(k=>{ if(k.indexOf(p.id+'/')===0) delete S.sigC[k]; });
+    if(cur===p){ cur=null; dropPendingSave(); }
+  }
+  function afterApply(){ persistLocal(); clearTimeout(S.refreshT); S.refreshT=setTimeout(refreshView,60); }
+  function refreshView(){
+    try{
+      if(libraryVisible()) renderLibrary();
+      const ws=document.getElementById('workspace');
+      if(ws && !ws.classList.contains('hidden')){
+        if(!cur||!DB.projects.includes(cur)||cur.deleted){ cur=null; show('library'); renderLibrary(); return; }
+        if(view!=='cover' && !findNode(selId)) selId=firstDoc(cur.binder);
+        document.getElementById('wsTitle').textContent=cur.title||'Untitled';
+        const ae=document.activeElement, tag=ae&&ae.tagName||'';
+        const inForm=!!(ae&&ae.closest&&(ae.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(tag)));
+        if(!(inForm&&ae.closest('.binder'))) renderBinder();
+        if(!(inForm&&(ae.closest('#center')||ae.closest('#inspector')))){ renderCenter(); renderInspector(); }
+      }
+    }catch(e){ console.error('refresh',e); }
+    updateUI();
+  }
+
+  // ---------- uploading (device → cloud) ----------
+  const docRef=(pid,nid)=>S.fb.F.doc(S.db,'users',S.user.uid,'projects',pid,'docs',nid);
+  const metaRef=(pid)=>S.fb.F.doc(S.db,'users',S.user.uid,'projects',pid);
+  const withTimeout=(pr,ms)=>Promise.race([pr,new Promise((_,rej)=>setTimeout(()=>rej(Object.assign(new Error('timeout'),{code:'deadline-exceeded'})),ms))]);
+  function metaDoc(p){
+    const c=p.cover||{}; let img=c.image||null;
+    const tree=JSON.stringify({binder:strip(p.binder),trash:strip(p.trash)});
+    if(img && (img.length+tree.length)>900000) img=null;      // keep under the cloud's 1 MB-per-record limit; the picture stays on this device
+    return {title:p.title||'',author:p.author||'',subtitle:p.subtitle||'',kind:p.kind||'Novel',
+      cover:{mode:c.mode||'type',cloth:c.cloth||'clay',image:img},tree,treeAt:p.tu,createdAt:p.createdAt||0,deleted:!!p.deleted,purged:false,v:1};
+  }
+  function scheduleFlush(ms){ if(!S.user||!S.db) return; clearTimeout(S.flushTimer); S.flushTimer=setTimeout(()=>{ flush(); },ms); }
+  function flushNow(){ clearTimeout(S.flushTimer); return flush(); }
+  async function flush(){
+    if(!configured||!S.user||!S.db||!S.metaReady) return;
+    if(S.flushing){ S.again=true; return; }
+    if(typeof navigator!=='undefined'&&navigator.onLine===false){ updateUI(); return; }
+    S.flushing=true; S.again=false; let ok=true; const F=S.fb.F;
+    try{
+      for(const pid of (DB.purgeProjects||[]).slice()){
+        const snap=await withTimeout(F.getDocs(F.collection(S.db,'users',S.user.uid,'projects',pid,'docs')),20000);
+        for(const d of snap.docs) await withTimeout(F.deleteDoc(d.ref),20000);
+        await withTimeout(F.setDoc(metaRef(pid),{purged:true,deleted:true,title:'',tree:'{}',treeAt:bump(0),v:1}),20000);
+        DB.purgeProjects=(DB.purgeProjects||[]).filter(x=>x!==pid);
+      }
+      for(const p of DB.projects.slice()){
+        if(!S.docsReady[p.id]) continue;                      // never upload before we have seen what the cloud already holds
+        for(const nid of (p.purge||[]).slice()){ await withTimeout(F.deleteDoc(docRef(p.id,nid)),20000); p.purge=(p.purge||[]).filter(x=>x!==nid); }
+        const dirty=[]; eachDoc(p,n=>{ if((n.cu||0)>(n.pu||0)) dirty.push(n); });
+        for(const n of dirty){ const cu=n.cu; await withTimeout(F.setDoc(docRef(p.id,n.id),{content:n.content||'',at:cu,pa:now()}),20000); n.pu=Math.max(n.pu||0,cu); }
+        if((p.tu||0)>(p.pushedTu||0)){ const tu=p.tu; await withTimeout(F.setDoc(metaRef(p.id),metaDoc(p)),20000); p.pushedTu=Math.max(p.pushedTu||0,tu); }
+      }
+      S.lastSync=now(); S.error='';
+    }catch(e){ ok=false; console.error('sync upload',e); S.error=friendly(e); }
+    finally{ S.flushing=false; persistLocal(); }
+    updateUI();
+    if(!ok) scheduleFlush(30000); else if(S.again) scheduleFlush(300);
+  }
+  function afterSave(){ if(!configured) return; updateUI(); scheduleFlush(1500); }
+  function notePurgeNodes(p,ids){ if(!configured||!ids||!ids.length) return; p.purge=Array.from(new Set((p.purge||[]).concat(ids))); }
+  function notePurgeProject(p){
+    if(!configured) return; let pushed=(p.pushedTu||0)>0; eachDoc(p,n=>{ if((n.pu||0)>0) pushed=true; });
+    if(pushed){ DB.purgeProjects=Array.isArray(DB.purgeProjects)?DB.purgeProjects:[]; if(!DB.purgeProjects.includes(p.id)) DB.purgeProjects.push(p.id); }
+    const u=S.docUnsubs[p.id]; if(u){ try{u();}catch(e){} delete S.docUnsubs[p.id]; }
+    delete S.sigT[p.id]; delete S.docsReady[p.id]; Object.keys(S.sigC).forEach(k=>{ if(k.indexOf(p.id+'/')===0) delete S.sigC[k]; });
+  }
+
+  function boot(){
+    if(configured){ scan(); persistLocal();
+      window.addEventListener('online',()=>{ updateUI(); scheduleFlush(300); });
+      window.addEventListener('offline',updateUI);
+      document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible'){ updateUI(); scheduleFlush(500); } });
+      setInterval(()=>{ if(S.user&&dirtyCount()>0) scheduleFlush(200); },45000);
+    }
+    updateUI();
+  }
+  return {boot,scan,afterSave,updateUI,openAccount,closeAccount,dismiss,signIn,signOutBtn,syncNowBtn,maybePrompt,
+    canLoad,loadFailed:loadFailedFn,attach,notePurgeNodes,notePurgeProject,releaseHeld,flushNow,status,dirtyCount,
+    get state(){ return S; }};
+})();
+window.Sync=Sync;      // (a top-level const isn't visible as window.Sync by itself; the loader script below needs it)
+
 // ---------------- boot ----------------
 function boot(){
   load();
-  if(!DB.projects.length) seedDemo();
+  if(!DB.projects.length && !syncConfigured()) seedDemo();      // with sync on, a fresh device waits for your library instead of inventing a second sample
+  Sync.boot();
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeConfirm(); try{ Sync.closeAccount(); }catch(_){} try{ closeCompile(); }catch(_){} } });
   const now=new Date(); const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']; const mon=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('thDate').textContent=days[now.getDay()]+' · '+now.getDate()+' '+mon[now.getMonth()];
   renderLibrary();
   const th=document.getElementById('threshold');
-  const enter=()=>{ th.classList.add('gone'); setTimeout(()=>{ show('library'); },700); };
+  const enter=()=>{ th.classList.add('gone'); setTimeout(()=>{ show('library'); try{ Sync.maybePrompt(); }catch(e){} },700); };
   th.addEventListener('click',enter); setTimeout(()=>{ if(!th.classList.contains('gone')) enter(); },4200);
 }
 boot();
 window.__ns={get DB(){return DB;}, get cur(){return cur;}, get view(){return view;}, get selId(){return selId;},
   sel:(id)=>{selId=id; renderWorkspace();}, setView:(v)=>{view=v; if(v!=='editor')scriv=false; renderWorkspace();}, setScriv:(b)=>{scriv=b; if(b)view='editor'; renderWorkspace();},
   openProject, addNode, moveNode, deleteNode, restoreNode, findNode, nodeWords, manuscriptWords, setCloth, newNovel, locate, save, load,
-  buildIR, renderMD, renderTXT, renderHTMLDoc, buildDocx, htmlToParas, openCompile};
+  buildIR, renderMD, renderTXT, renderHTMLDoc, buildDocx, htmlToParas, openCompile,
+  Sync, importProjects, confirmBox, closeConfirm, askDeleteProject, deleteProject, restoreProject, purgeProject, askEmptyTrash, emptyTrash,
+  renderLibrary, notify, persistLocal, flushPendingSave, renderEditor, shrinkImage};
+</script>
+<script type="module">
+/* Loads Firebase from Google's CDN after the page is already usable. If it can't load (offline, blocked), the app simply keeps working on this device. */
+(async()=>{
+  try{
+    if(!window.Sync || !window.Sync.canLoad()) return;
+    const base='https://www.gstatic.com/firebasejs/12.19.0/';
+    const [appM,authM,fsM]=await Promise.all([import(base+'firebase-app.js'),import(base+'firebase-auth.js'),import(base+'firebase-firestore.js')]);
+    window.Sync.attach({appM,authM,fsM});
+  }catch(e){ console.error('Firebase could not be loaded',e); if(window.Sync) window.Sync.loadFailed(e); }
+})();
 </script>
 </body>
 </html>
