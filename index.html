@@ -126,6 +126,17 @@
   .row:hover .ct{display:none;}
   .row .mv button{width:15px;height:15px;font-size:8px;color:var(--graphite);display:flex;align-items:center;justify-content:center;border-radius:3px;}
   .row .mv button:hover{background:var(--paper-deep);color:var(--clay);}
+  .row .mv button[data-del]{color:#8B5A4A;}
+  .row .mv button[data-del]:hover{color:#C44536;background:var(--paper-deep);}
+  .confirm-delete{position:fixed;z-index:300;background:var(--bone);border:1px solid var(--rule);border-radius:9px;box-shadow:0 12px 40px rgba(42,34,25,.32);padding:24px 28px;max-width:360px;}
+  .confirm-delete h3{font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:8px;}
+  .confirm-delete p{font-size:15px;color:var(--ink-soft);margin-bottom:20px;line-height:1.45;}
+  .confirm-delete .actions{display:flex;gap:14px;justify-content:flex-end;}
+  .confirm-delete button{padding:8px 18px;border-radius:6px;font-size:14px;border:1px solid var(--rule);}
+  .confirm-delete .cancel{background:transparent;color:var(--ink-soft);}
+  .confirm-delete .cancel:hover{background:var(--paper-deep);}
+  .confirm-delete .delete{background:#C44536;color:var(--bone);}
+  .confirm-delete .delete:hover{background:#A63A2A;}
   .row.folder .nm{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15.5px;}
   .row .rename{flex:1;font:inherit;background:var(--bone);border:1px solid var(--clay);border-radius:3px;padding:1px 4px;outline:none;}
   .binder-foot{padding:9px 14px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--graphite);font-style:italic;display:flex;justify-content:space-between;}
@@ -508,8 +519,9 @@ function renderBinder(){
         '<span class="dot" style="background:'+pig(n.label)+'"></span>'+
         '<span class="nm">'+esc(n.name)+'</span>'+
         '<span class="ct">'+(isF?(n.children?n.children.length:0):(nodeWords(n)||'·'))+'</span>'+
-        '<span class="mv"><button title="up" data-mv="up">▲</button><button title="down" data-mv="dn">▼</button></span>';
+        '<span class="mv"><button title="up" data-mv="up">▲</button><button title="down" data-mv="dn">▼</button><button title="delete" data-del="'+n.id+'">✕</button></span>';
       row.onclick=(e)=>{
+        if(e.target.dataset.del){ e.stopPropagation(); confirmDelete(n); return; }
         if(e.target.dataset.mv){ e.stopPropagation(); moveNode(n.id, e.target.dataset.mv==='up'?-1:1); return; }
         if(isF && e.offsetX < (20+depth*15)){ n.open=!n.open; save(); renderBinder(); return; }
         selId=n.id; if(isF && view==='editor'){ view='corkboard'; } if(isMobile())closeBinder(); renderWorkspace();
@@ -569,6 +581,18 @@ function restoreNode(id){
   const i=cur.trash.findIndex(n=>n.id===id); if(i<0)return; const [x]=cur.trash.splice(i,1); cur.binder.push(x); save(); renderWorkspace();
 }
 function emptyTrash(){ cur.trash=[]; save(); renderBinder(); }
+function confirmDelete(n){
+  const old=document.getElementById('delDialog'); if(old)old.remove();
+  const d=document.createElement('div'); d.id='delDialog'; d.className='confirm-delete';
+  const isF=n.type==='folder'; const word=isF?'folder':'document';
+  d.innerHTML='<h3>Delete this '+word+'?</h3><p>'+esc(n.name)+(isF?' and all its contents':'')+' will be moved to trash.</p>'+
+    '<div class="actions"><button class="cancel" onclick="document.getElementById(\'delDialog\').remove();">Keep it</button>'+
+    '<button class="delete" onclick="reallyDelete(\''+n.id+'\')">Delete</button></div>';
+  const x=window.innerWidth/2-180, y=window.innerHeight/2-100;
+  d.style.left=x+'px'; d.style.top=y+'px';
+  document.body.appendChild(d);
+}
+function reallyDelete(id){ deleteNode(id); const d=document.getElementById('delDialog'); if(d)d.remove(); }
 
 // ---- drag reorder (same-level or into folder) ----
 let dragId=null;
