@@ -506,6 +506,31 @@
     .gstats b{font-size:22px;}
   }
   .fmt-row{grid-template-columns:repeat(3,1fr);}
+
+  /* ===================== v0.8 ===================== */
+
+  /* compile scope tree */
+  .scope-tree{margin:6px 0 2px;max-height:38vh;overflow-y:auto;border:1px solid var(--rule);border-radius:7px;padding:8px 4px;background:var(--paper);}
+  .scope-row{padding:3px 4px;}
+  .scope-lbl{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:14.5px;color:var(--ink);}
+  .scope-lbl input[type=checkbox]{accent-color:var(--clay);width:15px;height:15px;flex-shrink:0;}
+  .scope-ic{font-size:12px;opacity:.7;}
+  .scope-nm{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .scope-wc{font-size:11px;color:var(--graphite);font-style:italic;flex-shrink:0;}
+
+  /* binder indent/outdent buttons */
+  .row .io{display:none;gap:1px;}
+  .row:hover .io{display:flex;}
+  .row .io button{width:15px;height:15px;font-size:8px;color:var(--graphite);display:flex;align-items:center;justify-content:center;border-radius:3px;}
+  .row .io button:hover{background:var(--paper-deep);color:var(--clay);}
+
+  /* drag drop-below indicator */
+  .row.drop-below{box-shadow:inset 0 -2px 0 var(--clay);}
+
+  @media (max-width:820px){
+    .row .io{display:flex;}
+    .scope-tree{max-height:30vh;}
+  }
 </style>
 </head>
 <body>
@@ -519,12 +544,12 @@
    exactly as before — on this device only, with no sync.
    ===================================================================== */
 window.FOLIO_FIREBASE = {
-  apiKey: "AIzaSyDrP2fo_RoshLGKXVAqEabZKBpac5E5ccI",
-  authDomain: "porte-folio-f4590.firebaseapp.com",
-  projectId: "porte-folio-f4590",
-  storageBucket: "porte-folio-f4590.firebasestorage.app",
-  messagingSenderId: "506327238355",
-  appId: "1:506327238355:web:4a6312436a21212eb53626"
+  apiKey: "PASTE_apiKey",
+  authDomain: "PASTE_authDomain",
+  projectId: "PASTE_projectId",
+  storageBucket: "PASTE_storageBucket",
+  messagingSenderId: "PASTE_messagingSenderId",
+  appId: "PASTE_appId"
 };
 </script>
 
@@ -769,14 +794,16 @@ function renderBinder(){
         '<span class="dot" style="background:'+pig(n.label)+'"></span>'+
         '<span class="nm">'+esc(n.name)+'</span>'+
         '<span class="ct">'+(isF?(n.children?n.children.length:0):(nodeWords(n)||'·'))+'</span>'+
+        '<span class="io"><button title="indent" data-io="in">→</button><button title="outdent" data-io="out">←</button></span>'+
         '<span class="mv"><button title="up" data-mv="up">▲</button><button title="down" data-mv="dn">▼</button><button title="delete" data-del="'+n.id+'">✕</button></span>';
       row.onclick=(e)=>{
         if(e.target.dataset.del){ e.stopPropagation(); confirmDelete(n); return; }
         if(e.target.dataset.mv){ e.stopPropagation(); moveNode(n.id, e.target.dataset.mv==='up'?-1:1); return; }
+        if(e.target.dataset.io){ e.stopPropagation(); if(e.target.dataset.io==='in') indentNode(n.id); else outdentNode(n.id); return; }
         if(isF && e.offsetX < (20+depth*15)){ n.open=!n.open; save(); renderBinder(); return; }
+        if(e.target.classList.contains('nm') && n.id===selId && !row.querySelector('.rename')){ startRename(row,n); return; }
         selId=n.id; if(isF && view==='editor'){ view='corkboard'; } if(isMobile())closeBinder(); renderWorkspace();
       };
-      row.ondblclick=(e)=>{ if(e.target.dataset.mv)return; startRename(row,n); };
       attachDrag(row,n);
       host.appendChild(row);
       if(isF && n.open && n.children) draw(n.children,depth+1);
@@ -847,19 +874,22 @@ function reallyDelete(id){ closeConfirm(); deleteNode(id); }
 let dragId=null;
 function attachDrag(row,n){
   row.addEventListener('dragstart',e=>{ dragId=n.id; e.dataTransfer.effectAllowed='move'; });
-  row.addEventListener('dragover',e=>{ e.preventDefault(); row.classList.remove('drop-above','drop-in');
-    if(n.type==='folder' && e.offsetX>30) row.classList.add('drop-in'); else row.classList.add('drop-above'); });
-  row.addEventListener('dragleave',()=>row.classList.remove('drop-above','drop-in'));
-  row.addEventListener('drop',e=>{ e.preventDefault(); const into=row.classList.contains('drop-in'); row.classList.remove('drop-above','drop-in');
-    if(!dragId||dragId===n.id)return; doDrop(dragId,n.id,into); });
+  row.addEventListener('dragover',e=>{ e.preventDefault(); row.classList.remove('drop-above','drop-in','drop-below');
+    const rect=row.getBoundingClientRect(); const ry=e.clientY-rect.top; const rh=rect.height;
+    if(n.type==='folder' && e.offsetX>30 && ry>rh*0.25 && ry<rh*0.75) row.classList.add('drop-in');
+    else if(ry>rh*0.5) row.classList.add('drop-below');
+    else row.classList.add('drop-above'); });
+  row.addEventListener('dragleave',()=>row.classList.remove('drop-above','drop-in','drop-below'));
+  row.addEventListener('drop',e=>{ e.preventDefault(); const into=row.classList.contains('drop-in'); const below=row.classList.contains('drop-below'); row.classList.remove('drop-above','drop-in','drop-below');
+    if(!dragId||dragId===n.id)return; doDrop(dragId,n.id,into,below); });
 }
-function doDrop(fromId,toId,into){
+function doDrop(fromId,toId,into,below){
   const fl=locate(fromId); if(!fl)return; const target=findNode(toId);
   // guard: don't drop a folder into its own descendant
   if(fl.node.children && findNode(toId, fl.node.children)) return;
   const [moved]=fl.arr.splice(fl.index,1);
   if(into && target.type==='folder'){ target.children=target.children||[]; target.children.push(moved); target.open=true; }
-  else { const tl=locate(toId); tl.arr.splice(tl.index,0,moved); }
+  else { const tl=locate(toId); if(!tl){ save(); renderBinder(); return; } tl.arr.splice(below ? tl.index+1 : tl.index, 0, moved); }
   save(); renderBinder();
 }
 
@@ -1069,6 +1099,7 @@ function closeDrawers(){ document.body.classList.remove('show-binder','show-insp
 function closeBinder(){ document.body.classList.remove('show-binder'); syncScrim(); }
 document.getElementById('binderBtn').addEventListener('click',()=>{ document.body.classList.toggle('show-binder'); if(document.body.classList.contains('show-binder'))document.body.classList.remove('show-inspector'); syncScrim(); });
 document.getElementById('drawerScrim').addEventListener('click',closeDrawers);
+document.addEventListener('keydown',binderKeyHandler);
 
 // ---------------- export ----------------
 function exportAll(){ flushPendingSave(); const blob=new Blob([JSON.stringify({projects:DB.projects,snaps:DB.snaps||{}},null,2)],{type:'application/json'}); trigger('folio-novels-'+new Date().toISOString().slice(0,10)+'.json',blob); }
@@ -1120,8 +1151,6 @@ const MARKS={orn:'◆',stars:'*  *  *',hash:'#',space:''};
 function compileRoots(){ return cur.binder.filter(n=>n.role!=='research'); }
 function openCompile(){
   const old=document.getElementById('compileVeil'); if(old)old.remove();
-  const selNode=selId?findNode(selId):null;
-  const selFolder=(selNode&&selNode.type==='folder')?selNode:null;
   const v=document.createElement('div'); v.className='veil'; v.id='compileVeil';
   v.innerHTML=
     '<div class="modal"><h2>Compile — '+esc(cur.title||'Untitled')+'</h2>'+
@@ -1130,7 +1159,7 @@ function openCompile(){
       fmtBtn('pdf','⎙','PDF')+fmtBtn('docx','❐','Word')+fmtBtn('epub','❡','E-book')+fmtBtn('md','M','Markdown')+fmtBtn('txt','¶','Text')+fmtBtn('html','◇','HTML')+
     '</div>'+
     '<div class="flabel">What to include</div>'+
-    '<select class="scope-sel" id="scopeSel"><option value="all">The whole novel (research notes left out)</option>'+(selFolder?'<option value="folder">Only “'+esc(selFolder.name)+'”</option>':'')+'</select>'+
+    compileScopeHTML()+
     '<div class="flabel">Layout</div>'+
     '<select class="scope-sel" id="layoutSel"><option value="book">Book — serif, like a printed novel</option><option value="manuscript">Standard manuscript — for agents &amp; publishers</option></select>'+
     '<div class="flabel">Scene-break mark</div>'+
@@ -1146,6 +1175,7 @@ function openCompile(){
     '</div>';
   document.body.appendChild(v);
   requestAnimationFrame(()=>v.classList.add('show'));
+  bindScopeUI(v);
   v.addEventListener('click',e=>{ if(e.target===v)closeCompile(); });
   v.querySelector('#fmtRow').addEventListener('click',e=>{ const f=e.target.closest('.fmt'); if(!f)return; compileFmt=f.dataset.f; v.querySelectorAll('.fmt').forEach(x=>x.classList.toggle('on',x.dataset.f===compileFmt)); fmtNote(); });
   v.querySelectorAll('.opt-row').forEach(r=>r.addEventListener('click',()=>{ const b=r.querySelector('.opt-box'); b.textContent=b.textContent.trim()?'':'✓'; }));
@@ -1169,8 +1199,7 @@ function readCompileOpts(v){
 function runCompile(){
   const v=document.getElementById('compileVeil');
   const opt=readCompileOpts(v);
-  const scope=v.querySelector('#scopeSel').value;
-  const roots = (scope==='folder' && selId)? [findNode(selId)] : compileRoots();
+  const roots = getSelectedRoots(v);
   doCompile(compileFmt,roots,opt);
   closeCompile();
 }
@@ -2116,6 +2145,156 @@ function renderRefs(n){
   back.querySelectorAll('[data-go2]').forEach(el=>el.onclick=()=>{ selId=el.dataset.go2; view='editor'; scriv=false; renderWorkspace(); });
 }
 
+
+// ============ v0.8  Selective compile ============
+function compileScopeHTML(){
+  const roots = compileRoots();
+  let opts = '<option value="all">The whole novel (research notes left out)</option>';
+  roots.forEach(n => {
+    if(n.type==='folder'){
+      opts += '<option value="folder:'+esc(n.id)+'">Only “'+esc(n.name)+'”</option>';
+    }
+  });
+  opts += '<option value="custom">Custom selection…</option>';
+  let tree = '<div class="scope-tree hidden" id="scopeTree">';
+  tree += buildScopeTree(roots, 0);
+  tree += '</div>';
+  return '<select class="scope-sel" id="scopeSel">' + opts + '</select>' + tree;
+}
+function buildScopeTree(nodes, depth){
+  let h = '';
+  (nodes||[]).forEach(n => {
+    if(n.role==='research') return;
+    const isF = n.type==='folder';
+    const pad = 8 + depth * 20;
+    const wc = nodeWords(n);
+    h += '<div class="scope-row" style="padding-left:'+pad+'px">';
+    h += '<label class="scope-lbl"><input type="checkbox" class="scope-cb" data-sid="'+n.id+'" checked>';
+    h += '<span class="scope-ic">'+(isF?'▤':'▢')+'</span> ';
+    h += '<span class="scope-nm">'+esc(n.name)+'</span>';
+    h += '<span class="scope-wc">'+wc.toLocaleString()+' w</span>';
+    h += '</label></div>';
+    if(isF && n.children) h += buildScopeTree(n.children, depth+1);
+  });
+  return h;
+}
+function bindScopeUI(veil){
+  const sel = veil.querySelector('#scopeSel');
+  const tree = veil.querySelector('#scopeTree');
+  sel.addEventListener('change', () => {
+    if(sel.value === 'custom'){ tree.classList.remove('hidden'); }
+    else {
+      tree.classList.add('hidden');
+      if(sel.value.startsWith('folder:')){
+        const fid = sel.value.slice(7);
+        uncheckAll(tree); checkFolder(tree, fid);
+      } else { checkAll(tree); }
+    }
+  });
+  tree.querySelectorAll('.scope-cb').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const sid = cb.dataset.sid;
+      const node = findNode(sid);
+      if(node && node.type==='folder' && node.children){
+        const ids = []; walk([node], n => ids.push(n.id));
+        const state = cb.checked;
+        tree.querySelectorAll('.scope-cb').forEach(x => {
+          if(ids.includes(x.dataset.sid)) x.checked = state;
+        });
+      }
+      updateParentChecks(tree);
+    });
+  });
+}
+function uncheckAll(tree){ tree.querySelectorAll('.scope-cb').forEach(cb => cb.checked = false); }
+function checkAll(tree){ tree.querySelectorAll('.scope-cb').forEach(cb => cb.checked = true); }
+function checkFolder(tree, fid){
+  const node = findNode(fid);
+  if(!node) return;
+  const ids = []; walk([node], n => ids.push(n.id));
+  tree.querySelectorAll('.scope-cb').forEach(cb => {
+    if(ids.includes(cb.dataset.sid)) cb.checked = true;
+  });
+}
+function updateParentChecks(tree){
+  function syncNode(n){
+    if(n.type!=='folder' || !n.children) return;
+    n.children.forEach(syncNode);
+    const cb = tree.querySelector('.scope-cb[data-sid="'+n.id+'"]');
+    if(!cb) return;
+    const childCbs = n.children.map(c => tree.querySelector('.scope-cb[data-sid="'+c.id+'"]')).filter(Boolean);
+    if(!childCbs.length) return;
+    const allChecked = childCbs.every(c => c.checked);
+    const someChecked = childCbs.some(c => c.checked || c.indeterminate);
+    cb.checked = allChecked;
+    cb.indeterminate = !allChecked && someChecked;
+  }
+  compileRoots().forEach(syncNode);
+}
+function getSelectedRoots(veil){
+  const sel = veil.querySelector('#scopeSel');
+  if(sel.value === 'all') return compileRoots();
+  if(sel.value.startsWith('folder:')){
+    const fid = sel.value.slice(7);
+    const node = findNode(fid);
+    return node ? [node] : compileRoots();
+  }
+  const tree = veil.querySelector('#scopeTree');
+  const checked = new Set();
+  tree.querySelectorAll('.scope-cb:checked').forEach(cb => checked.add(cb.dataset.sid));
+  if(!checked.size) return compileRoots();
+  function filterNodes(nodes){
+    const out = [];
+    (nodes||[]).forEach(n => {
+      if(n.role==='research') return;
+      if(n.type==='folder'){
+        const kids = filterNodes(n.children);
+        if(checked.has(n.id) || kids.length){
+          out.push(Object.assign({}, n, {children: kids}));
+        }
+      } else { if(checked.has(n.id)) out.push(n); }
+    });
+    return out;
+  }
+  return filterNodes(cur.binder);
+}
+
+// ============ v0.8  Binder overhaul ============
+function indentNode(id){
+  const l = locate(id); if(!l) return;
+  for(let i = l.index - 1; i >= 0; i--){
+    if(l.arr[i].type === 'folder'){
+      const target = l.arr[i];
+      const [moved] = l.arr.splice(l.index, 1);
+      target.children = target.children || [];
+      target.children.push(moved);
+      target.open = true;
+      save(); renderBinder();
+      return true;
+    }
+  }
+  return false;
+}
+function outdentNode(id){
+  const l = locate(id); if(!l || !l.parent) return false;
+  const pl = locate(l.parent.id); if(!pl) return false;
+  const [moved] = l.arr.splice(l.index, 1);
+  pl.arr.splice(pl.index + 1, 0, moved);
+  save(); renderBinder();
+  return true;
+}
+function binderKeyHandler(e){
+  if(!selId) return;
+  const active = document.activeElement;
+  if(active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+  if(e.key === 'Tab' && !e.ctrlKey && !e.metaKey){
+    e.preventDefault();
+    if(e.shiftKey) outdentNode(selId); else indentNode(selId);
+  }
+  if(e.key === 'ArrowUp' && e.altKey){ e.preventDefault(); moveNode(selId, -1); }
+  if(e.key === 'ArrowDown' && e.altKey){ e.preventDefault(); moveNode(selId, 1); }
+}
+
 // ---------------- boot ----------------
 function boot(){
   load(); applyTheme(getTheme());
@@ -2142,6 +2321,7 @@ window.__ns={get DB(){return DB;}, get cur(){return cur;}, get view(){return vie
   searchDocs, replaceInDoc, replaceAll, takeSnapshot, snapList, restoreSnapshot, diffParas, paraTexts, autoSnapIfNeeded, trimSnaps, deleteSnapshot,
   setGoals, touchProgress, todayWords, streakOf, lastDays, dayKey, goalsOf, daysUntil, baseline,
   ensureResearch, addResearchDoc, researchDocs, backlinks, buildEpub, doCompile, isSceneMark, needsBreak, fmt, openSearch, openGoals, enterFocus, exitFocus, applyTheme, getTheme, toggleTheme, compileRoots,
+  compileScopeHTML, buildScopeTree, bindScopeUI, getSelectedRoots, indentNode, outdentNode, binderKeyHandler,
   get SNAP_PER_DOC(){return SNAP_PER_DOC;}, get SNAP_TOTAL_CHARS(){return SNAP_TOTAL_CHARS;}};
 </script>
 <script type="module">
